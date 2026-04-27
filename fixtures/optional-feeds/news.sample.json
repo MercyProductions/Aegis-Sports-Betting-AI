@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "contract": "aegis.news.v1",
+  "generatedAt": "2026-04-27T20:00:00Z",
+  "provider": "Aegis sample news feed",
+  "items": [
+    {
+      "id": "sample-news-001",
+      "title": "Lakers keep starting rotation intact before Warriors matchup",
+      "source": "Aegis sample desk",
+      "url": "https://example.com/aegis/sample-news-001",
+      "publishedAt": "2026-04-27T20:00:00Z",
+      "teams": ["LAL", "GSW"],
+      "league": "NBA"
+    },
+    {
+      "id": "sample-news-002",
+      "title": "Chiefs offensive starters expected for full workload",
+      "source": "Aegis sample desk",
+      "url": "https://example.com/aegis/sample-news-002",
+      "publishedAt": "2026-04-27T20:00:00Z",
+      "teams": ["KC", "BUF"],
+      "league": "NFL"
+    }
+  ]
+}

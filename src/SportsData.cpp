@@ -149,6 +149,10 @@ namespace aegis
             game.feed_age_label = ReadString(value, "feedAgeLabel", "Now");
             game.freshness_state = ReadString(value, "freshnessState", game.feed_age_label == "Fallback" ? "fallback" : "fresh");
             game.source_note = ReadString(value, "sourceNote");
+            game.source_timestamp = ReadString(value, "sourceTimestamp", game.feed_age_label);
+            game.start_time = ReadString(value, "startTime");
+            game.odds_match_status = ReadString(value, "oddsMatchStatus");
+            game.odds_match_detail = ReadString(value, "oddsMatchDetail");
             game.venue = ReadString(value, "venue");
             game.away = ParseTeam(value["away"]);
             game.home = ParseTeam(value["home"]);
@@ -189,6 +193,9 @@ namespace aegis
             prediction.risk = ReadString(value, "risk", "Model risk");
             prediction.reason = ReadString(value, "reason");
             prediction.model_version = ReadString(value, "modelVersion");
+            prediction.source_timestamp = ReadString(value, "sourceTimestamp");
+            prediction.data_trust = ReadString(value, "dataTrust");
+            prediction.confidence_band = ReadString(value, "confidenceBand");
             prediction.input_count = ReadInt(value, "inputCount", 0);
             prediction.missing_input_penalty = ReadInt(value, "missingInputPenalty", 0);
             prediction.best_book = ReadString(value, "bestBook", "Provider links");
@@ -637,15 +644,100 @@ namespace aegis
             return out;
         }
 
-        std::vector<std::string> TeamAliasesFor(const Team& team)
+        std::string CompactName(const std::string& value)
+        {
+            std::string out;
+            for (const char c : Lower(value))
+            {
+                const unsigned char uc = static_cast<unsigned char>(c);
+                if (std::isalnum(uc) != 0)
+                    out.push_back(static_cast<char>(uc));
+            }
+            return out;
+        }
+
+        void AddTeamAlias(std::vector<std::string>& aliases, const std::string& raw)
+        {
+            const std::string normalized = NormalizeName(raw);
+            if (!normalized.empty() && std::find(aliases.begin(), aliases.end(), normalized) == aliases.end())
+                aliases.push_back(normalized);
+        }
+
+        void AddKnownTeamAliases(std::vector<std::string>& aliases)
+        {
+            const std::vector<std::vector<std::string>> groups = {
+                {"la clippers", "los angeles clippers", "l a clippers", "lac"},
+                {"la lakers", "los angeles lakers", "l a lakers", "lal"},
+                {"ny knicks", "new york knicks", "nyk"},
+                {"brooklyn nets", "bkn", "brk nets"},
+                {"phoenix suns", "phx suns", "phx"},
+                {"golden state warriors", "gs warriors", "gsw"},
+                {"san antonio spurs", "sa spurs", "sas"},
+                {"new orleans pelicans", "no pelicans", "nop"},
+                {"oklahoma city thunder", "okc thunder", "okc"},
+                {"ny giants", "new york giants", "nyg"},
+                {"ny jets", "new york jets", "nyj"},
+                {"la rams", "los angeles rams", "lar"},
+                {"la chargers", "los angeles chargers", "lac"},
+                {"sf 49ers", "san francisco 49ers", "sfo", "sf"},
+                {"tampa bay buccaneers", "tb buccaneers", "tb bucs", "tbb"},
+                {"new england patriots", "ne patriots", "nep"},
+                {"new orleans saints", "no saints", "nos"},
+                {"green bay packers", "gb packers", "gbp"},
+                {"kc chiefs", "kansas city chiefs", "kan chiefs", "kc"},
+                {"washington commanders", "was commanders", "wsh commanders"},
+                {"ny yankees", "new york yankees", "nyy"},
+                {"ny mets", "new york mets", "nym"},
+                {"la dodgers", "los angeles dodgers", "lad"},
+                {"la angels", "los angeles angels", "anaheim angels", "laa"},
+                {"sf giants", "san francisco giants", "sfg"},
+                {"sd padres", "san diego padres", "sdp"},
+                {"tb rays", "tampa bay rays", "tbr"},
+                {"kc royals", "kansas city royals", "kcr"},
+                {"chicago white sox", "chi white sox", "cws"},
+                {"arizona diamondbacks", "az diamondbacks", "ari diamondbacks"},
+                {"ny rangers", "new york rangers", "nyr"},
+                {"ny islanders", "new york islanders", "nyi"},
+                {"la kings", "los angeles kings", "lak"},
+                {"tampa bay lightning", "tb lightning", "tbl"},
+                {"vegas golden knights", "vgk", "vegas knights"},
+                {"utah hockey club", "utah hc", "uta"},
+                {"man united", "manchester united", "man utd", "mufc"},
+                {"man city", "manchester city", "mcfc"},
+                {"tottenham hotspur", "tottenham", "spurs"},
+                {"wolves", "wolverhampton wanderers", "wolverhampton"},
+                {"inter milan", "internazionale", "inter"},
+                {"psg", "paris saint germain", "paris sg"}
+            };
+
+            for (const std::vector<std::string>& group : groups)
+            {
+                bool matched = false;
+                for (const std::string& alias : group)
+                {
+                    const std::string normalized = NormalizeName(alias);
+                    const std::string compact = CompactName(alias);
+                    matched = std::any_of(aliases.begin(), aliases.end(), [&](const std::string& existing) {
+                        return existing == normalized || CompactName(existing) == compact;
+                    });
+                    if (matched)
+                        break;
+                }
+                if (!matched)
+                    continue;
+                for (const std::string& alias : group)
+                    AddTeamAlias(aliases, alias);
+            }
+        }
+
+        std::vector<std::string> TeamAliasesFor(const Team& team, const std::string& league_key = "")
         {
             std::vector<std::string> aliases;
-            for (const std::string& raw : { team.name, team.short_name, team.abbr })
+            for (const std::string& raw : { team.name, team.short_name, team.abbr, league_key + " " + team.name, league_key + " " + team.abbr })
             {
-                const std::string normalized = NormalizeName(raw);
-                if (!normalized.empty() && std::find(aliases.begin(), aliases.end(), normalized) == aliases.end())
-                    aliases.push_back(normalized);
+                AddTeamAlias(aliases, raw);
             }
+            AddKnownTeamAliases(aliases);
             return aliases;
         }
 
@@ -658,10 +750,48 @@ namespace aegis
             {
                 if (alias.empty())
                     continue;
-                if (normalized == alias || normalized.find(alias) != std::string::npos || alias.find(normalized) != std::string::npos)
+                const std::string compact = CompactName(normalized);
+                const std::string alias_compact = CompactName(alias);
+                if (normalized == alias || compact == alias_compact ||
+                    normalized.find(alias) != std::string::npos ||
+                    alias.find(normalized) != std::string::npos)
+                {
                     return true;
+                }
             }
             return false;
+        }
+
+        std::string DatePrefix(const std::string& value)
+        {
+            const std::string trimmed = Trim(value);
+            if (trimmed.size() >= 10 && std::isdigit(static_cast<unsigned char>(trimmed[0])) != 0)
+                return trimmed.substr(0, 10);
+            return {};
+        }
+
+        std::string ConfidenceBand(int confidence)
+        {
+            if (confidence < 58)
+                return "Audit only";
+            if (confidence < 64)
+                return "Monitor";
+            if (confidence < 70)
+                return "Lean";
+            if (confidence < 78)
+                return "Strong lean";
+            return "High uncertainty cap";
+        }
+
+        std::string DataTrustForGame(const Game& game)
+        {
+            if (Lower(game.freshness_state) == "fallback" || game.feed_age_label == "Fallback")
+                return "Fallback";
+            if (Lower(game.odds_match_status).find("matched") != std::string::npos)
+                return "Scoreboard + odds";
+            if (!game.odds_match_status.empty())
+                return "Scoreboard only";
+            return "Scoreboard";
         }
 
         std::vector<ProviderLeague> ProviderLeagues()
@@ -1022,6 +1152,7 @@ namespace aegis
             game.home = ParseProviderTeam(competitors, "home");
             game.matchup = game.away.abbr + " @ " + game.home.abbr;
             const std::string start = ReadString(competition, "date", ReadString(event, "date"));
+            game.start_time = start;
             const StatusMeta meta = ParseStatusMeta(competition["status"], start);
             game.status_key = meta.key;
             game.status_label = meta.label;
@@ -1029,6 +1160,7 @@ namespace aegis
             game.clock = meta.clock;
             game.detail = meta.detail;
             game.feed_age_label = fetched_label;
+            game.source_timestamp = fetched_label;
             game.venue = ReadString(competition["venue"], "fullName");
             const JsonValue& odds_array = competition["odds"];
             const JsonValue& odds = odds_array.IsArray() && !odds_array.array_value.empty() ? odds_array.At(0) : odds_array;
@@ -1066,6 +1198,9 @@ namespace aegis
                 game.feed_age_label = "Fallback";
                 game.freshness_state = "fallback";
                 game.source_note = "The app could not build a live provider slate on this refresh.";
+                game.source_timestamp = "Fallback " + NowTimeLabel();
+                game.odds_match_status = "Fallback";
+                game.odds_match_detail = "No direct provider slate was available for odds matching.";
             }
             return demo.games;
         }
@@ -1177,8 +1312,8 @@ namespace aegis
         std::string PickSideFromPrediction(const Game& game, const Prediction& prediction)
         {
             const std::string pick = NormalizeName(prediction.pick);
-            const std::vector<std::string> away_aliases = TeamAliasesFor(game.away);
-            const std::vector<std::string> home_aliases = TeamAliasesFor(game.home);
+            const std::vector<std::string> away_aliases = TeamAliasesFor(game.away, game.league_key);
+            const std::vector<std::string> home_aliases = TeamAliasesFor(game.home, game.league_key);
             for (const std::string& alias : away_aliases)
             {
                 if (!alias.empty() && pick.find(alias) != std::string::npos)
@@ -1213,9 +1348,9 @@ namespace aegis
 
         std::string PredictedWinnerFromPick(const Game& game, const std::string& pick)
         {
-            if (AliasMatches(pick, TeamAliasesFor(game.away)))
+            if (AliasMatches(pick, TeamAliasesFor(game.away, game.league_key)))
                 return game.away.name;
-            if (AliasMatches(pick, TeamAliasesFor(game.home)))
+            if (AliasMatches(pick, TeamAliasesFor(game.home, game.league_key)))
                 return game.home.name;
             if (Lower(pick).find("over") != std::string::npos)
                 return "Over";
@@ -1243,6 +1378,8 @@ namespace aegis
             prediction.status_key = game.status_key;
             prediction.status_label = game.status_label;
             prediction.model_version = "Aegis Source Model v2";
+            prediction.source_timestamp = game.source_timestamp.empty() ? game.feed_age_label : game.source_timestamp;
+            prediction.data_trust = DataTrustForGame(game);
             prediction.can_bet = game.status_key != "final";
             prediction.risk = game.status_key == "live" ? "Live volatility" : (game.status_key == "final" ? "Closed market" : "Pregame risk");
 
@@ -1321,6 +1458,7 @@ namespace aegis
 
             prediction.confidence_value = confidence;
             prediction.confidence = std::to_string(confidence) + "%";
+            prediction.confidence_band = ConfidenceBand(confidence);
             prediction.fair_probability = FormatPointValue(static_cast<double>(confidence)) + "%";
             prediction.fair_odds = ProbabilityToAmerican(static_cast<double>(confidence) / 100.0);
             prediction.edge = game.status_key == "final" ? "+0.0%" : FormatSignedPercent(ClampDouble(confidence - 50.0, 1.5, 16.5));
@@ -1332,12 +1470,14 @@ namespace aegis
                 {"3. Add scoreboard state", "", prediction.status_label, "", game.feed_age_label.empty() ? "Provider status is included when available." : game.feed_age_label},
                 {"4. Add market evidence", "", prediction.market, "", (has_spread || has_total) ? "Spread or total context is active on this matchup." : "No direct line yet, so this remains a watchlist signal."},
                 {"5. Apply missing-data penalty", "", "-" + std::to_string(prediction.missing_input_penalty) + " pts", "", "Unavailable injuries, lineups, and premium tracking keep confidence conservative."},
-                {"6. Final confidence", "", prediction.confidence, "", "Displayed as an informational estimate, never as a guarantee."}
+                {"6. Final confidence", "", prediction.confidence, "", "Displayed as an informational estimate, never as a guarantee."},
+                {"7. Source timestamp", "", prediction.source_timestamp, "", "Every model row keeps the refresh source label used for this read."}
             };
             prediction.factors = {
                 {"Team rating edge", "", FormatSignedPoints(side_pick ? side_rating_edge : std::abs(home_rating - away_rating)), "", "Ratings use records, home field, final/winner flags, and live score context."},
                 {"Live score alignment", "", FormatSignedPoints(live_score_alignment), "", "Only active during live or completed games, and only when the pick maps to a side."},
                 {"Market evidence", "", prediction.edge, "", "Direct sportsbook prices improve edge calculations when an odds key is configured."},
+                {"Data trust", "", prediction.data_trust, "", "Scoreboard-only and no-match rows stay clearly separated from directly matched sportsbook lines."},
                 {"Lineups and injuries", "", "Manual check", "", "Official reports and late scratches must still be verified."}
             };
             prediction.missing_inputs = {
@@ -1385,10 +1525,41 @@ namespace aegis
             return {};
         }
 
+        struct SportMarketSummary
+        {
+            std::string sport_key;
+            int scoreboard_games = 0;
+            int odds_events = 0;
+            int matched_games = 0;
+            int available_lines = 0;
+            int unmatched_games = 0;
+            int unmatched_odds_events = 0;
+            int failed_calls = 0;
+            bool configured = false;
+            bool reachable = false;
+            std::string quota_remaining;
+            std::string quota_used;
+            std::string quota_last;
+            std::string last_status = "Not requested";
+            std::string detail;
+        };
+
+        struct MatchAttempt
+        {
+            std::optional<JsonValue> event;
+            std::string event_key;
+            std::string reason;
+            int candidates = 0;
+        };
+
         struct MarketAccessSummary
         {
             int available_lines = 0;
             int matched_events = 0;
+            int fetched_events = 0;
+            int unmatched_games = 0;
+            int unmatched_odds_events = 0;
+            int unsupported_games = 0;
             bool odds_configured = false;
             bool odds_reachable = false;
             int bookmakers = 0;
@@ -1396,6 +1567,11 @@ namespace aegis
             int odds_errors = 0;
             std::string odds_status = "Needs API key";
             std::string odds_detail = "Add an Odds API key in Settings to enable direct sportsbook line matching.";
+            std::string quota_remaining;
+            std::string quota_used;
+            std::string quota_last;
+            std::map<std::string, SportMarketSummary> sports;
+            std::vector<InfoItem> diagnostics;
         };
 
         std::string HeaderValue(const std::string& raw_headers, const std::string& header_name)
@@ -1469,19 +1645,37 @@ namespace aegis
             return {};
         }
 
+        SportMarketSummary& SportSummary(MarketAccessSummary& summary, const std::string& sport_key)
+        {
+            SportMarketSummary& row = summary.sports[sport_key];
+            if (row.sport_key.empty())
+                row.sport_key = sport_key.empty() ? "unsupported" : sport_key;
+            return row;
+        }
+
         std::vector<JsonValue> FetchOddsEvents(const std::string& sport_key, const std::string& api_key, MarketAccessSummary& summary)
         {
             if (sport_key.empty() || api_key.empty())
                 return {};
+            SportMarketSummary& sport_summary = SportSummary(summary, sport_key);
             const std::string url = "https://api.the-odds-api.com/v4/sports/" + UrlEncode(sport_key) +
                 "/odds/?apiKey=" + UrlEncode(api_key) +
                 "&regions=us&markets=h2h,spreads,totals&oddsFormat=american&dateFormat=iso&bookmakers=" + UrlEncode(OddsBookmakers());
             const HttpResponse response = HttpGet(url);
             ++summary.odds_calls;
+            summary.quota_remaining = HeaderValue(response.raw_headers, "x-requests-remaining");
+            summary.quota_used = HeaderValue(response.raw_headers, "x-requests-used");
+            summary.quota_last = HeaderValue(response.raw_headers, "x-requests-last");
+            sport_summary.configured = true;
+            sport_summary.quota_remaining = summary.quota_remaining;
+            sport_summary.quota_used = summary.quota_used;
+            sport_summary.quota_last = summary.quota_last;
             if (!response.error.empty() || response.status_code < 200 || response.status_code >= 300)
             {
                 ++summary.odds_errors;
+                ++sport_summary.failed_calls;
                 summary.odds_reachable = false;
+                sport_summary.reachable = false;
                 if (!response.error.empty())
                     summary.odds_detail = response.error;
                 else if (response.status_code == 401 || response.status_code == 403)
@@ -1490,35 +1684,97 @@ namespace aegis
                     summary.odds_detail = "Odds API rate limit reached. The app will keep scoreboard data live.";
                 else
                     summary.odds_detail = "Odds API returned HTTP " + std::to_string(response.status_code) + ".";
+                sport_summary.last_status = summary.odds_status == "Checking" ? "Failed" : summary.odds_status;
+                sport_summary.detail = summary.odds_detail;
                 return {};
             }
             summary.odds_reachable = true;
             summary.odds_status = "Connected";
             summary.odds_detail = "Direct sportsbook odds returned from The Odds API.";
+            sport_summary.reachable = true;
+            sport_summary.last_status = "Connected";
             const JsonParseResult parsed = ParseJson(response.body);
             if (!parsed.ok || !parsed.value.IsArray())
             {
                 ++summary.odds_errors;
+                ++sport_summary.failed_calls;
                 summary.odds_detail = "Odds API response could not be parsed.";
+                sport_summary.last_status = "Malformed";
+                sport_summary.detail = summary.odds_detail;
                 return {};
             }
+            sport_summary.odds_events = static_cast<int>(parsed.value.array_value.size());
+            sport_summary.detail = sport_summary.odds_events > 0 ? "Odds events returned for this sport." : "No odds events returned for this sport.";
+            summary.fetched_events += sport_summary.odds_events;
             return parsed.value.array_value;
         }
 
-        std::optional<JsonValue> FindMatchingOddsEvent(const Game& game, const std::vector<JsonValue>& events)
+        std::string OddsEventKey(const JsonValue& event)
         {
-            const std::vector<std::string> home_aliases = TeamAliasesFor(game.home);
-            const std::vector<std::string> away_aliases = TeamAliasesFor(game.away);
+            const std::string id = ReadString(event, "id");
+            if (!id.empty())
+                return id;
+            return NormalizeName(ReadString(event, "away_team") + "|" + ReadString(event, "home_team") + "|" + ReadString(event, "commence_time"));
+        }
+
+        std::string OddsEventLabel(const JsonValue& event)
+        {
+            const std::string away = ReadString(event, "away_team", "Away");
+            const std::string home = ReadString(event, "home_team", "Home");
+            return away + " @ " + home;
+        }
+
+        MatchAttempt FindMatchingOddsEvent(const Game& game, const std::vector<JsonValue>& events)
+        {
+            MatchAttempt attempt;
+            const std::vector<std::string> home_aliases = TeamAliasesFor(game.home, game.league_key);
+            const std::vector<std::string> away_aliases = TeamAliasesFor(game.away, game.league_key);
+            const std::string game_date = DatePrefix(game.start_time);
+            int best_score = 0;
             for (const JsonValue& event : events)
             {
                 const std::string event_home = ReadString(event, "home_team");
                 const std::string event_away = ReadString(event, "away_team");
+                const std::string event_title = ReadString(event, "sport_title") + " " + ReadString(event, "sport_key");
                 const bool direct = AliasMatches(event_home, home_aliases) && AliasMatches(event_away, away_aliases);
                 const bool swapped = AliasMatches(event_home, away_aliases) && AliasMatches(event_away, home_aliases);
-                if (direct || swapped)
-                    return event;
+                if (!direct && !swapped)
+                    continue;
+
+                ++attempt.candidates;
+                int score = direct ? 100 : 92;
+                const std::string event_date = DatePrefix(ReadString(event, "commence_time"));
+                if (!game_date.empty() && game_date == event_date)
+                    score += 18;
+                if (!game.league.empty() && NormalizeName(event_title).find(NormalizeName(game.league)) != std::string::npos)
+                    score += 6;
+                if (!game.league_key.empty() && NormalizeName(event_title).find(NormalizeName(game.league_key)) != std::string::npos)
+                    score += 4;
+                if (NormalizeName(event_home) == NormalizeName(game.home.name) || NormalizeName(event_away) == NormalizeName(game.away.name))
+                    score += 4;
+
+                if (!attempt.event.has_value() || score > best_score)
+                {
+                    best_score = score;
+                    attempt.event = event;
+                    attempt.event_key = OddsEventKey(event);
+                    attempt.reason = direct ? "Matched by home/away aliases" : "Matched by swapped aliases";
+                    if (!game_date.empty() && game_date == event_date)
+                        attempt.reason += " and start date";
+                }
             }
-            return std::nullopt;
+            if (!attempt.event.has_value())
+            {
+                if (events.empty())
+                    attempt.reason = "Odds API returned no events for this sport.";
+                else
+                    attempt.reason = "No team alias match in " + std::to_string(static_cast<int>(events.size())) + " odds events.";
+            }
+            else if (attempt.candidates > 1)
+            {
+                attempt.reason += "; closest candidate selected from " + std::to_string(attempt.candidates) + " matches.";
+            }
+            return attempt;
         }
 
         std::optional<JsonValue> SelectOutcome(const JsonValue& outcomes, const std::string& market_key, const Game& game, const Prediction& prediction)
@@ -1542,7 +1798,7 @@ namespace aegis
             const std::string side = PickSideFromPrediction(game, prediction);
             if (!side.empty())
             {
-                const std::vector<std::string> aliases = side == "away" ? TeamAliasesFor(game.away) : TeamAliasesFor(game.home);
+                const std::vector<std::string> aliases = side == "away" ? TeamAliasesFor(game.away, game.league_key) : TeamAliasesFor(game.home, game.league_key);
                 for (const JsonValue& outcome : outcomes.array_value)
                 {
                     if (AliasMatches(ReadString(outcome, "name"), aliases))
@@ -1648,6 +1904,7 @@ namespace aegis
                 summary.odds_detail = "Key is configured; fetching direct sportsbook odds.";
             }
             std::map<std::string, std::vector<JsonValue>> odds_cache;
+            std::map<std::string, std::set<std::string>> matched_odds_events;
             std::map<std::string, Prediction*> predictions_by_game;
             const std::map<std::string, LineSnapshot> previous_snapshots = LoadMarketSnapshots();
             for (Prediction& prediction : predictions)
@@ -1664,13 +1921,20 @@ namespace aegis
                     const std::string sport_key = OddsSportKey(game);
                     if (!sport_key.empty())
                     {
+                        SportMarketSummary& sport_summary = SportSummary(summary, sport_key);
+                        sport_summary.configured = true;
+                        ++sport_summary.scoreboard_games;
                         if (!odds_cache.contains(sport_key))
                             odds_cache[sport_key] = FetchOddsEvents(sport_key, api_key, summary);
-                        const std::optional<JsonValue> event = FindMatchingOddsEvent(game, odds_cache[sport_key]);
-                        if (event.has_value())
+                        const MatchAttempt attempt = FindMatchingOddsEvent(game, odds_cache[sport_key]);
+                        if (attempt.event.has_value())
                         {
                             ++summary.matched_events;
-                            const JsonValue& bookmakers = (*event)["bookmakers"];
+                            ++sport_summary.matched_games;
+                            game.odds_match_status = "Matched";
+                            game.odds_match_detail = attempt.reason;
+                            matched_odds_events[sport_key].insert(attempt.event_key);
+                            const JsonValue& bookmakers = (*attempt.event)["bookmakers"];
                             if (bookmakers.IsArray())
                             {
                                 for (const JsonValue& bookmaker : bookmakers.array_value)
@@ -1687,13 +1951,70 @@ namespace aegis
                                         const std::string key = SnapshotKey(game, *link);
                                         const auto previous = previous_snapshots.find(key);
                                         link->movement = MovementFromSnapshot(previous == previous_snapshots.end() ? nullptr : &previous->second, *link);
+                                        if (link->last_update.empty())
+                                            link->last_update = game.source_timestamp;
                                         links.push_back(*link);
                                         ++summary.available_lines;
+                                        ++sport_summary.available_lines;
                                     }
                                 }
                             }
+                            if (links.empty())
+                            {
+                                game.odds_match_status = "Matched no lines";
+                                game.odds_match_detail = "Odds event matched, but the selected bookmakers did not return a usable " + prediction->market + " line.";
+                            }
+                        }
+                        else
+                        {
+                            ++summary.unmatched_games;
+                            ++sport_summary.unmatched_games;
+                            game.odds_match_status = odds_cache[sport_key].empty() ? "No odds events" : "No odds match";
+                            game.odds_match_detail = attempt.reason;
+                            if (summary.diagnostics.size() < 18)
+                            {
+                                summary.diagnostics.push_back({
+                                    "Unmatched game",
+                                    "",
+                                    game.league,
+                                    "",
+                                    game.matchup + " / " + attempt.reason,
+                                    "Odds API",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    sport_key,
+                                    game.odds_match_status
+                                });
+                            }
                         }
                     }
+                    else
+                    {
+                        ++summary.unsupported_games;
+                        SportMarketSummary& sport_summary = SportSummary(summary, "unsupported");
+                        sport_summary.configured = true;
+                        ++sport_summary.scoreboard_games;
+                        ++sport_summary.unmatched_games;
+                        sport_summary.last_status = "Unsupported";
+                        sport_summary.detail = "This scoreboard league has no Odds API sport-key mapping yet.";
+                        game.odds_match_status = "Unsupported";
+                        game.odds_match_detail = "No Odds API sport-key mapping exists for " + game.league + ".";
+                    }
+                }
+                else
+                {
+                    const std::string sport_key = OddsSportKey(game);
+                    SportMarketSummary& sport_summary = SportSummary(summary, sport_key.empty() ? "unsupported" : sport_key);
+                    ++sport_summary.scoreboard_games;
+                    sport_summary.last_status = sport_key.empty() ? "Unsupported" : "Needs key";
+                    sport_summary.detail = sport_key.empty()
+                        ? "This scoreboard league has no Odds API sport-key mapping yet."
+                        : "Save an Odds API key to fetch this sport from the source.";
+                    game.odds_match_status = "Needs key";
+                    game.odds_match_detail = "Save an Odds API key to match this scoreboard game to sportsbook prices.";
                 }
 
                 if (links.empty())
@@ -1710,9 +2031,10 @@ namespace aegis
                         link.market = prediction->market;
                         link.line = prediction->pick;
                         link.price = "--";
-                        link.note = summary.odds_configured ? "No matched live line returned for this event. Open the book and verify manually." : "Add an Odds API key in Settings for direct sportsbook line matching.";
+                        link.note = summary.odds_configured ? game.odds_match_detail : "Add an Odds API key in Settings for direct sportsbook line matching.";
                         link.available = false;
-                        link.source = summary.odds_configured ? "No match" : "Needs odds key";
+                        link.source = summary.odds_configured ? game.odds_match_status : "Needs odds key";
+                        link.last_update = game.source_timestamp;
                         link.movement = summary.odds_configured ? summary.odds_status : "Not tracking";
                         links.push_back(link);
                         if (links.size() >= 3)
@@ -1734,8 +2056,45 @@ namespace aegis
                     prediction->edge = best->model_edge.empty() ? prediction->edge : best->model_edge;
                     prediction->input_count += 1;
                 }
+                prediction->source_timestamp = game.source_timestamp.empty() ? prediction->source_timestamp : game.source_timestamp;
+                prediction->data_trust = DataTrustForGame(game);
                 prediction->market_links = links;
                 prediction->comparison = BuildTeamComparison(game, *prediction);
+            }
+
+            for (const auto& [sport_key, events] : odds_cache)
+            {
+                SportMarketSummary& sport_summary = SportSummary(summary, sport_key);
+                const std::set<std::string>& matched = matched_odds_events[sport_key];
+                int unmatched = 0;
+                for (const JsonValue& event : events)
+                {
+                    const std::string key = OddsEventKey(event);
+                    if (!key.empty() && matched.find(key) == matched.end())
+                    {
+                        ++unmatched;
+                        if (summary.diagnostics.size() < 18)
+                        {
+                            summary.diagnostics.push_back({
+                                "Unmatched odds event",
+                                "",
+                                sport_key,
+                                "",
+                                OddsEventLabel(event) + " did not map to the current scoreboard slate.",
+                                "Odds API",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                ReadString(event, "commence_time"),
+                                "No scoreboard match"
+                            });
+                        }
+                    }
+                }
+                sport_summary.unmatched_odds_events = unmatched;
+                summary.unmatched_odds_events += unmatched;
             }
 
             AppendMarketSnapshots(games);
@@ -1747,6 +2106,394 @@ namespace aegis
             if (summary.odds_configured && summary.odds_calls > 0 && !summary.odds_reachable && summary.odds_errors > 0)
                 summary.odds_status = "Key/error";
             return summary;
+        }
+
+        std::vector<InfoItem> BuildMarketDiagnostics(const MarketAccessSummary& summary)
+        {
+            std::vector<InfoItem> rows;
+            rows.push_back({
+                "Odds API coverage",
+                "",
+                summary.odds_status,
+                "",
+                std::to_string(summary.matched_events) + " matched games / " + std::to_string(summary.fetched_events) + " odds events fetched.",
+                "",
+                "",
+                "",
+                "",
+                "",
+                summary.quota_remaining.empty() ? "" : summary.quota_remaining + " quota left",
+                "The Odds API",
+                summary.odds_configured ? (summary.odds_reachable ? "Reachable" : "Configured") : "Needs key"
+            });
+            rows.push_back({
+                "Mismatch summary",
+                "",
+                std::to_string(summary.unmatched_games) + " games",
+                "",
+                std::to_string(summary.unmatched_odds_events) + " odds events did not map to the current scoreboard slate. " + std::to_string(summary.unsupported_games) + " games use unsupported sport keys.",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "Matcher",
+                summary.unmatched_games == 0 && summary.unmatched_odds_events == 0 ? "Clear" : "Needs review"
+            });
+
+            for (const auto& [sport_key, sport] : summary.sports)
+            {
+                rows.push_back({
+                    "Sport coverage",
+                    "",
+                    sport_key,
+                    "",
+                    std::to_string(sport.scoreboard_games) + " board games / " +
+                        std::to_string(sport.odds_events) + " odds events / " +
+                        std::to_string(sport.matched_games) + " matched / " +
+                        std::to_string(sport.available_lines) + " lines.",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    sport.detail,
+                    sport.last_status
+                });
+                if (rows.size() >= 10)
+                    break;
+            }
+
+            for (const InfoItem& item : summary.diagnostics)
+            {
+                rows.push_back(item);
+                if (rows.size() >= 18)
+                    break;
+            }
+
+            if (rows.size() <= 2 && !summary.odds_configured)
+            {
+                rows.push_back({
+                    "Next step",
+                    "",
+                    "Save key",
+                    "",
+                    "The matcher will populate per-sport mismatches after a valid Odds API key is saved and a refresh completes.",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "Setup",
+                    "Waiting"
+                });
+            }
+            return rows;
+        }
+
+        std::vector<InfoItem> BuildPerSportOddsStatus(const MarketAccessSummary& summary)
+        {
+            std::vector<InfoItem> rows;
+            for (const auto& [sport_key, sport] : summary.sports)
+            {
+                const std::string configured = sport.configured ? "configured" : "needs key";
+                const std::string reachable = sport.reachable ? "reachable" : "not reached";
+                const std::string quota = sport.quota_remaining.empty()
+                    ? (summary.quota_remaining.empty() ? "--" : summary.quota_remaining)
+                    : sport.quota_remaining;
+                const std::string last = sport.last_status.empty() ? "Not requested" : sport.last_status;
+                std::ostringstream detail;
+                detail << "Configured: " << configured
+                    << " / Reachable: " << reachable
+                    << " / Matched: " << sport.matched_games
+                    << " / Available lines: " << sport.available_lines
+                    << " / Failed calls: " << sport.failed_calls
+                    << " / Unmatched games: " << sport.unmatched_games
+                    << " / Unmatched odds: " << sport.unmatched_odds_events
+                    << " / Quota: " << quota
+                    << " / Last status: " << last;
+                if (!sport.detail.empty())
+                    detail << " / " << sport.detail;
+
+                rows.push_back({
+                    sport_key,
+                    "",
+                    last,
+                    std::to_string(sport.matched_games) + "/" + std::to_string(sport.scoreboard_games) + " matched",
+                    detail.str(),
+                    sport.configured ? "Configured" : "Needs key",
+                    "",
+                    "",
+                    "",
+                    "",
+                    quota == "--" ? "" : quota + " quota left",
+                    "The Odds API",
+                    sport.reachable ? "Reachable" : (sport.failed_calls > 0 ? "Failed" : last)
+                });
+            }
+
+            if (rows.empty())
+            {
+                rows.push_back({
+                    "Odds API sports",
+                    "",
+                    summary.odds_configured ? "Waiting" : "Needs key",
+                    "",
+                    summary.odds_configured
+                        ? "No supported scoreboard sport has requested The Odds API yet on this refresh."
+                        : "Save an Odds API key, then refresh to populate per-sport source status.",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "The Odds API",
+                    summary.odds_status
+                });
+            }
+            return rows;
+        }
+
+        enum class FeedFieldKind
+        {
+            String,
+            Number,
+            Bool,
+            Array,
+            StringOrNumber
+        };
+
+        struct FeedFieldContract
+        {
+            const char* name;
+            FeedFieldKind kind;
+            bool required;
+            const char* note;
+        };
+
+        struct FeedContract
+        {
+            const char* key;
+            const char* title;
+            const char* contract;
+            int max_age_hours;
+            std::vector<FeedFieldContract> fields;
+        };
+
+        std::string FeedFieldKindLabel(FeedFieldKind kind)
+        {
+            switch (kind)
+            {
+            case FeedFieldKind::String: return "string";
+            case FeedFieldKind::Number: return "number";
+            case FeedFieldKind::Bool: return "boolean";
+            case FeedFieldKind::Array: return "array";
+            case FeedFieldKind::StringOrNumber: return "string/number";
+            default: return "value";
+            }
+        }
+
+        const std::vector<FeedContract>& OptionalFeedContracts()
+        {
+            static const std::vector<FeedContract> contracts = {
+                {
+                    "injury",
+                    "Injury Feed",
+                    "aegis.injuries.v1",
+                    12,
+                    {
+                        {"athleteId", FeedFieldKind::String, true, "Stable provider/player id."},
+                        {"athleteName", FeedFieldKind::String, true, "Display name used for review."},
+                        {"team", FeedFieldKind::String, true, "Team abbreviation or provider team name."},
+                        {"league", FeedFieldKind::String, true, "League key such as NBA, NFL, MLB, NHL."},
+                        {"status", FeedFieldKind::String, true, "out, doubtful, questionable, probable, active, or unknown."},
+                        {"updatedAt", FeedFieldKind::String, true, "ISO-8601 provider timestamp."},
+                        {"source", FeedFieldKind::String, false, "Provider/source label."},
+                        {"detail", FeedFieldKind::String, false, "Human-readable injury note."}
+                    }
+                },
+                {
+                    "lineup",
+                    "Lineup Feed",
+                    "aegis.lineups.v1",
+                    6,
+                    {
+                        {"gameId", FeedFieldKind::String, true, "Provider game id or mapped Aegis game id."},
+                        {"athleteId", FeedFieldKind::String, false, "Stable provider/player id."},
+                        {"athleteName", FeedFieldKind::String, true, "Player expected in or out of the lineup."},
+                        {"team", FeedFieldKind::String, true, "Team abbreviation or provider team name."},
+                        {"role", FeedFieldKind::String, true, "starter, bench, scratched, goalie, pitcher, or inactive."},
+                        {"status", FeedFieldKind::String, true, "confirmed, projected, inactive, scratched, or unknown."},
+                        {"updatedAt", FeedFieldKind::String, true, "ISO-8601 provider timestamp."}
+                    }
+                },
+                {
+                    "news",
+                    "News Feed",
+                    "aegis.news.v1",
+                    24,
+                    {
+                        {"id", FeedFieldKind::String, true, "Stable article/update id."},
+                        {"title", FeedFieldKind::String, true, "Headline shown in source review."},
+                        {"source", FeedFieldKind::String, true, "Publisher/source label."},
+                        {"url", FeedFieldKind::String, true, "Canonical article URL."},
+                        {"publishedAt", FeedFieldKind::String, true, "ISO-8601 publication timestamp."},
+                        {"teams", FeedFieldKind::Array, false, "Related team abbreviations or ids."},
+                        {"league", FeedFieldKind::String, false, "League key when available."}
+                    }
+                },
+                {
+                    "props",
+                    "Player Props Feed",
+                    "aegis.props.v1",
+                    2,
+                    {
+                        {"gameId", FeedFieldKind::String, true, "Provider game id or mapped Aegis game id."},
+                        {"athleteId", FeedFieldKind::String, false, "Stable provider/player id."},
+                        {"athleteName", FeedFieldKind::String, true, "Player tied to the market."},
+                        {"team", FeedFieldKind::String, true, "Team abbreviation or provider team name."},
+                        {"market", FeedFieldKind::String, true, "Points, rebounds, strikeouts, shots, etc."},
+                        {"line", FeedFieldKind::StringOrNumber, true, "Offered prop threshold."},
+                        {"odds", FeedFieldKind::StringOrNumber, true, "American odds or provider price."},
+                        {"book", FeedFieldKind::String, true, "Book/provider label."},
+                        {"updatedAt", FeedFieldKind::String, true, "ISO-8601 market timestamp."}
+                    }
+                }
+            };
+            return contracts;
+        }
+
+        const FeedContract* FindOptionalFeedContract(const std::string& feed_key)
+        {
+            const std::string key = Lower(Trim(feed_key));
+            for (const FeedContract& contract : OptionalFeedContracts())
+            {
+                if (key == contract.key)
+                    return &contract;
+            }
+            return nullptr;
+        }
+
+        bool MatchesFieldKind(const JsonValue& value, FeedFieldKind kind)
+        {
+            switch (kind)
+            {
+            case FeedFieldKind::String: return value.IsString();
+            case FeedFieldKind::Number: return value.IsNumber();
+            case FeedFieldKind::Bool: return value.IsBool();
+            case FeedFieldKind::Array: return value.IsArray();
+            case FeedFieldKind::StringOrNumber: return value.IsString() || value.IsNumber();
+            default: return !value.IsNull();
+            }
+        }
+
+        void AddFeedIssue(OptionalFeedValidationResult& result, const std::string& code, const std::string& path, const std::string& detail, bool warning = false)
+        {
+            if (warning)
+                ++result.warnings;
+            else
+                ++result.errors;
+
+            result.issues.push_back({
+                code,
+                "",
+                path,
+                "",
+                detail,
+                result.contract,
+                warning ? "Warning" : "Error"
+            });
+        }
+
+        int ParseFixedInt(const std::string& value, size_t offset, size_t length)
+        {
+            if (offset + length > value.size())
+                return -1;
+            int out = 0;
+            for (size_t i = offset; i < offset + length; ++i)
+            {
+                if (!std::isdigit(static_cast<unsigned char>(value[i])))
+                    return -1;
+                out = out * 10 + (value[i] - '0');
+            }
+            return out;
+        }
+
+        bool ParseIsoTimeUtc(const std::string& value, std::time_t& out)
+        {
+            if (value.size() < 10)
+                return false;
+            const int year = ParseFixedInt(value, 0, 4);
+            const int month = ParseFixedInt(value, 5, 2);
+            const int day = ParseFixedInt(value, 8, 2);
+            int hour = 0;
+            int minute = 0;
+            int second = 0;
+            if (value.size() >= 19 && (value[10] == 'T' || value[10] == ' '))
+            {
+                hour = ParseFixedInt(value, 11, 2);
+                minute = ParseFixedInt(value, 14, 2);
+                second = ParseFixedInt(value, 17, 2);
+            }
+            if (year < 2000 || month < 1 || month > 12 || day < 1 || day > 31 || hour < 0 || hour > 23 || minute < 0 || minute > 59 || second < 0 || second > 60)
+                return false;
+
+            std::tm tm{};
+            tm.tm_year = year - 1900;
+            tm.tm_mon = month - 1;
+            tm.tm_mday = day;
+            tm.tm_hour = hour;
+            tm.tm_min = minute;
+            tm.tm_sec = second;
+#if defined(_WIN32)
+            out = _mkgmtime(&tm);
+#else
+            out = timegm(&tm);
+#endif
+            return out != static_cast<std::time_t>(-1);
+        }
+
+        void ValidateFeedTimestamp(OptionalFeedValidationResult& result, const std::string& path, const std::string& timestamp, int max_age_hours)
+        {
+            std::time_t parsed_time = 0;
+            if (!ParseIsoTimeUtc(timestamp, parsed_time))
+            {
+                AddFeedIssue(result, "wrong_type_timestamp", path, "Timestamp must be an ISO-8601 string such as 2026-04-27T18:30:00Z.");
+                return;
+            }
+
+            const std::time_t now = std::time(nullptr);
+            const double age_seconds = std::difftime(now, parsed_time);
+            if (age_seconds > static_cast<double>(max_age_hours) * 3600.0)
+            {
+                AddFeedIssue(result, "stale_timestamp", path, "Timestamp is older than the " + std::to_string(max_age_hours) + " hour contract window.");
+            }
+            else if (age_seconds < -900.0)
+            {
+                AddFeedIssue(result, "future_timestamp", path, "Timestamp is more than 15 minutes in the future.");
+            }
+        }
+
+        std::string ContractFieldSummary(const FeedContract& contract)
+        {
+            std::ostringstream stream;
+            stream << "Envelope: schemaVersion, generatedAt, provider, items[]. Required item fields: ";
+            bool first = true;
+            for (const FeedFieldContract& field : contract.fields)
+            {
+                if (!field.required)
+                    continue;
+                if (!first)
+                    stream << ", ";
+                first = false;
+                stream << field.name << " (" << FeedFieldKindLabel(field.kind) << ")";
+            }
+            stream << ". Max age: " << contract.max_age_hours << "h.";
+            return stream.str();
         }
 
         int CountGames(const std::vector<Game>& games, const std::string& status)
@@ -2059,6 +2806,14 @@ namespace aegis
             {"Sportsbook odds and line movement", "", "", "", "Add an Odds API key in Settings for live bookmaker line snapshots.", "", "", "", "", "", "", "The Odds API", "Needs API key"},
             {"Simulation and ML engine", "", "", "", "Feature schema is ready for local simulation and trained model inputs.", "", "", "", "", "", "", "Local model pipeline", "Designed"}
         };
+        state.diagnostics = {
+            {"Odds API coverage", "", "Demo", "", "Demo rows do not include real provider mismatch diagnostics.", "", "", "", "", "", "", "Demo", "Waiting"},
+            {"Mismatch summary", "", "Needs live refresh", "", "Sign in and save an Odds API key to populate unmatched-game and unmatched-odds reporting.", "", "", "", "", "", "", "Matcher", "Waiting"}
+        };
+        state.provider_sports = {
+            {"basketball_nba", "", "Demo", "1/2 matched", "Demo provider-sport row. Native refreshes show configured/reachable/matched/available/failed/quota/last-status fields.", "Configured", "", "", "", "", "--", "The Odds API", "Waiting"},
+            {"americanfootball_nfl", "", "Demo", "1/1 matched", "Demo provider-sport row. Save an Odds API key to populate real sport-level coverage.", "Configured", "", "", "", "", "--", "The Odds API", "Waiting"}
+        };
         state.insight_copy = "Our AI model predicts value on Lakers -4.5 due to 62% win-rate factors and Warriors' poor interior defense.";
         state.primary_market = "LAL @ GSW - Spread";
         state.selected_market = "Lakers -4.5";
@@ -2112,8 +2867,12 @@ namespace aegis
             {"Odds feed", "", market_access.odds_status, "", market_access.odds_detail},
             {"Bookmakers", "", std::to_string(market_access.bookmakers), "", "Outbound app links and direct odds matching"},
             {"Matched lines", "", std::to_string(market_access.available_lines), "", std::to_string(market_access.matched_events) + " matched events"},
+            {"Odds events", "", std::to_string(market_access.fetched_events), "", std::to_string(market_access.unmatched_odds_events) + " unmatched odds events / " + std::to_string(market_access.unmatched_games) + " unmatched games"},
+            {"Quota", "", market_access.quota_remaining.empty() ? "--" : market_access.quota_remaining + " left", "", market_access.quota_used.empty() ? "Quota headers appear after a successful Odds API response." : market_access.quota_used + " used / last call " + (market_access.quota_last.empty() ? "--" : market_access.quota_last)},
             {"Exchange scan", "", "Kalshi", "", "Public market search links"}
         };
+        state.diagnostics = BuildMarketDiagnostics(market_access);
+        state.provider_sports = BuildPerSportOddsStatus(market_access);
         state.books = BuildBookGrid(state.games);
         state.opportunities = BuildOpportunityScanner(state.games, state.predictions, market_access);
         state.edge_stack = {
@@ -2143,6 +2902,7 @@ namespace aegis
         state.model_sources = {
             {"Scoreboard and live state", "", "", "", "Game status, clock, score, league, and freshness refresh from direct ESPN public scoreboards.", "", "", "", "", "", "", "Native provider fetch", "Connected"},
             {"Sportsbook odds and line movement", "", "", "", market_access.odds_detail, "", "", "", "", "", "", "The Odds API", market_access.odds_status},
+            {"Odds matching diagnostics", "", "", "", std::to_string(market_access.unmatched_games) + " unmatched scoreboard games and " + std::to_string(market_access.unmatched_odds_events) + " unmatched odds events on the last refresh.", "", "", "", "", "", "", "Matcher", market_access.unmatched_games == 0 ? "Clear" : "Review"},
             {"Exchange access", "", "", "", "Kalshi is linked as public event-contract search. Users must verify product rules manually.", "", "", "", "", "", "", "Kalshi public markets", "Linked"},
             {"Simulation and ML engine", "", "", "", "Feature schema is ready for local simulation and trained model inputs.", "", "", "", "", "", "", "Local model pipeline", "Designed"}
         };
@@ -2152,7 +2912,8 @@ namespace aegis
             {"Upcoming", "", std::to_string(scheduled_games), "", "Scheduled events in the scan window."},
             {"Final", "", std::to_string(final_games), "", "Completed events retained for audit."},
             {"Markets", "", std::to_string(market_games), "", "Events with spread or total snapshots."},
-            {"Book lines", "", std::to_string(market_access.available_lines), "", "Matched direct sportsbook prices this refresh."}
+            {"Book lines", "", std::to_string(market_access.available_lines), "", "Matched direct sportsbook prices this refresh."},
+            {"Mismatches", "", std::to_string(market_access.unmatched_games), "", "Scoreboard games with no direct odds match this refresh."}
         };
 
         if (!state.predictions.empty())
@@ -2230,6 +2991,339 @@ namespace aegis
         return result;
     }
 
+    std::vector<InfoItem> OptionalFeedSchemaRows()
+    {
+        std::vector<InfoItem> rows;
+        for (const FeedContract& contract : OptionalFeedContracts())
+        {
+            rows.push_back({
+                contract.title,
+                "",
+                contract.contract,
+                std::to_string(contract.max_age_hours) + "h freshness",
+                ContractFieldSummary(contract),
+                "Optional adapter",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "Aegis feed contract",
+                "Defined"
+            });
+        }
+        return rows;
+    }
+
+    std::string OptionalFeedContractLabel(const std::string& feed_key)
+    {
+        const FeedContract* contract = FindOptionalFeedContract(feed_key);
+        return contract == nullptr ? "aegis.unknown.v1" : contract->contract;
+    }
+
+    OptionalFeedValidationResult ValidateOptionalFeedBody(const std::string& feed_key, const std::string& body)
+    {
+        OptionalFeedValidationResult result;
+        result.feed_key = Lower(Trim(feed_key));
+        const FeedContract* contract = FindOptionalFeedContract(result.feed_key);
+        if (contract == nullptr)
+        {
+            result.contract = "aegis.unknown.v1";
+            result.status = "Unknown feed";
+            result.detail = "No optional-feed contract exists for " + result.feed_key + ".";
+            AddFeedIssue(result, "unknown_feed_contract", "$", result.detail);
+            return result;
+        }
+        result.contract = contract->contract;
+        result.title = contract->title;
+
+        if (Trim(body).empty())
+        {
+            result.status = "Empty body";
+            result.detail = "empty_body: " + std::string(contract->title) + " returned no JSON content.";
+            AddFeedIssue(result, "empty_body", "$", result.detail);
+            return result;
+        }
+
+        const JsonParseResult parsed = ParseJson(body);
+        if (!parsed.ok)
+        {
+            result.status = "Invalid JSON";
+            result.detail = "malformed_json: " + parsed.error;
+            AddFeedIssue(result, "malformed_json", "$", parsed.error);
+            return result;
+        }
+        result.parsed = true;
+
+        if (!parsed.value.IsObject())
+        {
+            result.status = "Schema invalid";
+            result.detail = "wrong_type: root must be an object envelope with schemaVersion, generatedAt, provider, and items.";
+            AddFeedIssue(result, "wrong_type", "$", "Root value must be an object envelope.");
+            return result;
+        }
+
+        const JsonValue& root = parsed.value;
+        if (!root.Has("schemaVersion"))
+            AddFeedIssue(result, "missing_required_field", "$.schemaVersion", "Envelope must declare schemaVersion.");
+        else if (!root["schemaVersion"].IsString() && !root["schemaVersion"].IsNumber())
+            AddFeedIssue(result, "wrong_type", "$.schemaVersion", "schemaVersion must be a string or number.");
+
+        if (!root.Has("generatedAt"))
+        {
+            AddFeedIssue(result, "missing_required_field", "$.generatedAt", "Envelope must include a source generation timestamp.");
+        }
+        else if (!root["generatedAt"].IsString())
+        {
+            AddFeedIssue(result, "wrong_type", "$.generatedAt", "generatedAt must be an ISO-8601 string.");
+        }
+        else
+        {
+            result.source_timestamp = root["generatedAt"].AsString();
+            ValidateFeedTimestamp(result, "$.generatedAt", result.source_timestamp, contract->max_age_hours);
+        }
+
+        if (root.Has("contract") && root["contract"].IsString() && root["contract"].AsString() != result.contract)
+        {
+            AddFeedIssue(result, "wrong_contract", "$.contract", "Expected " + result.contract + " but received " + root["contract"].AsString() + ".");
+        }
+        if (root.Has("provider") && !root["provider"].IsString())
+            AddFeedIssue(result, "wrong_type", "$.provider", "provider must be a string when present.");
+
+        const JsonValue& items = root["items"];
+        if (!items.IsArray())
+        {
+            result.status = "Schema invalid";
+            result.detail = "missing_required_field: items must be a JSON array.";
+            AddFeedIssue(result, "missing_required_field", "$.items", "items must be an array.");
+            return result;
+        }
+
+        result.records = static_cast<int>(items.array_value.size());
+        if (items.array_value.empty())
+        {
+            AddFeedIssue(result, "empty_array", "$.items", "items cannot be empty because empty feeds cannot improve confidence or source coverage.");
+        }
+
+        for (size_t i = 0; i < items.array_value.size(); ++i)
+        {
+            const JsonValue& item = items.array_value[i];
+            const std::string base = "$.items[" + std::to_string(i) + "]";
+            if (!item.IsObject())
+            {
+                AddFeedIssue(result, "wrong_type", base, "Each item must be an object.");
+                continue;
+            }
+
+            for (const FeedFieldContract& field : contract->fields)
+            {
+                const std::string path = base + "." + field.name;
+                if (!item.Has(field.name))
+                {
+                    if (field.required)
+                        AddFeedIssue(result, "missing_required_field", path, std::string(field.name) + " is required by " + result.contract + ".");
+                    continue;
+                }
+
+                const JsonValue& value = item[field.name];
+                if (!MatchesFieldKind(value, field.kind))
+                {
+                    AddFeedIssue(result, "wrong_type", path, std::string(field.name) + " must be " + FeedFieldKindLabel(field.kind) + ".");
+                    continue;
+                }
+
+                const std::string field_name = field.name;
+                if ((field_name == "updatedAt" || field_name == "publishedAt") && value.IsString())
+                    ValidateFeedTimestamp(result, path, value.AsString(), contract->max_age_hours);
+            }
+        }
+
+        if (result.errors > 0)
+        {
+            result.ok = false;
+            result.status = "Schema invalid";
+            result.detail = std::to_string(result.errors) + " validation error(s), " + std::to_string(result.warnings) + " warning(s), " + std::to_string(result.records) + " record(s). Bad external data is marked invalid and is not promoted into model confidence.";
+            return result;
+        }
+
+        result.ok = result.records > 0;
+        result.status = result.ok ? "Schema valid" : "Schema invalid";
+        result.detail = result.ok
+            ? std::string(contract->title) + " matched " + result.contract + " with " + std::to_string(result.records) + " fresh record(s)."
+            : std::string(contract->title) + " returned no usable records.";
+        return result;
+    }
+
+    void ApplyOptionalFeedSignals(SportsState& state, const std::vector<OptionalFeedValidationResult>& feeds)
+    {
+        if (feeds.empty())
+            return;
+
+        int valid_feeds = 0;
+        int valid_records = 0;
+        int invalid_feeds = 0;
+        int validation_errors = 0;
+        bool injury_valid = false;
+        bool lineup_valid = false;
+        bool news_valid = false;
+        bool props_valid = false;
+
+        for (const OptionalFeedValidationResult& feed : feeds)
+        {
+            const std::string title = feed.title.empty() ? OptionalFeedContractLabel(feed.feed_key) : feed.title;
+            if (feed.ok)
+            {
+                ++valid_feeds;
+                valid_records += feed.records;
+            }
+            else
+            {
+                ++invalid_feeds;
+                validation_errors += std::max(1, feed.errors);
+            }
+
+            const std::string key = Lower(feed.feed_key);
+            injury_valid = injury_valid || (key == "injury" && feed.ok);
+            lineup_valid = lineup_valid || (key == "lineup" && feed.ok);
+            news_valid = news_valid || (key == "news" && feed.ok);
+            props_valid = props_valid || (key == "props" && feed.ok);
+
+            state.model_sources.push_back({
+                title,
+                "",
+                std::to_string(feed.records) + " rows",
+                "",
+                feed.detail,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                feed.contract,
+                feed.ok ? "Schema valid" : feed.status
+            });
+
+            state.metrics.push_back({
+                title,
+                "",
+                feed.ok ? std::to_string(feed.records) : "0",
+                "",
+                feed.contract + " / " + feed.status,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                feed.source_timestamp,
+                feed.ok ? "Valid" : "Invalid"
+            });
+
+            if (!feed.ok)
+            {
+                state.diagnostics.push_back({
+                    title + " invalid",
+                    "",
+                    feed.status,
+                    "",
+                    feed.detail,
+                    "Optional feed",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    feed.contract,
+                    "Invalid"
+                });
+            }
+        }
+
+        const int availability_inputs = (injury_valid ? 1 : 0) + (lineup_valid ? 1 : 0);
+        const int context_inputs = (news_valid ? 1 : 0) + (props_valid ? 1 : 0);
+        const int confidence_boost = availability_inputs * 2 + context_inputs;
+        const int penalty_credit = availability_inputs * 3 + context_inputs;
+
+        state.factors.push_back({
+            "Optional feed coverage",
+            "",
+            std::to_string(valid_records) + " rows",
+            std::to_string(valid_feeds) + "/" + std::to_string(static_cast<int>(feeds.size())) + " valid",
+            valid_feeds > 0
+                ? "Validated optional feeds now count as confidence inputs while invalid feeds remain diagnostics only."
+                : "Configured optional feeds did not pass schema validation, so confidence remains conservatively capped.",
+            "Optional adapters",
+            valid_feeds > 0 ? "Active" : "Invalid"
+        });
+
+        state.rules.push_back({
+            "Optional-feed honesty",
+            "",
+            "",
+            "",
+            "Only schema-valid injury, lineup, news, and prop feeds are allowed to reduce missing-data penalties.",
+            "",
+            "Active"
+        });
+
+        state.metrics.push_back({
+            "Optional feed rows",
+            "",
+            std::to_string(valid_records),
+            "",
+            std::to_string(invalid_feeds) + " invalid feed(s), " + std::to_string(validation_errors) + " validation error(s).",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "Optional adapters",
+            valid_feeds > 0 ? "Active" : "Waiting"
+        });
+
+        if (valid_feeds == 0)
+            return;
+
+        for (Prediction& prediction : state.predictions)
+        {
+            if (prediction.status_key == "final")
+                continue;
+
+            prediction.input_count += valid_feeds;
+            prediction.missing_input_penalty = std::max(0, prediction.missing_input_penalty - penalty_credit);
+            const int cap = prediction.market == "Moneyline Watch" ? 78 : 86;
+            prediction.confidence_value = ClampInt(prediction.confidence_value + confidence_boost, 1, cap);
+            prediction.confidence = std::to_string(prediction.confidence_value) + "%";
+            prediction.confidence_band = ConfidenceBand(prediction.confidence_value);
+            prediction.fair_probability = FormatPointValue(static_cast<double>(prediction.confidence_value)) + "%";
+            prediction.fair_odds = ProbabilityToAmerican(static_cast<double>(prediction.confidence_value) / 100.0);
+            prediction.edge = FormatSignedPercent(ClampDouble(prediction.confidence_value - 50.0, 1.5, 18.5));
+            prediction.expected_value = FormatMoney(std::max(0.0, (prediction.confidence_value - 50.0) * 1.85));
+            prediction.data_trust = prediction.data_trust.empty()
+                ? "Validated optional feeds"
+                : prediction.data_trust + " + optional feeds";
+
+            prediction.steps.push_back({
+                "8. Apply optional feeds",
+                "",
+                "+" + std::to_string(confidence_boost) + " pts",
+                "",
+                "Schema-valid optional feeds reduced the missing-data penalty; invalid or stale feeds were ignored."
+            });
+
+            if (injury_valid)
+                prediction.factors.push_back({"Injury feed", "", "Validated", "", "Fresh schema-valid injury rows are included as availability context."});
+            if (lineup_valid)
+                prediction.factors.push_back({"Lineup feed", "", "Validated", "", "Fresh schema-valid lineup rows are included as availability context."});
+            if (news_valid)
+                prediction.factors.push_back({"News feed", "", "Validated", "", "Fresh schema-valid news rows are included as context, not as certainty."});
+            if (props_valid)
+                prediction.factors.push_back({"Props feed", "", "Validated", "", "Fresh schema-valid props rows are available for prop-specific review."});
+        }
+    }
+
     ParseSportsResult ParseSportsApiResponse(const std::string& body)
     {
         ParseSportsResult result;
@@ -2288,6 +3382,8 @@ namespace aegis
         state.tape = ParseInfoArray(root_state["tape"]);
         state.model_sources = ParseInfoArray(root_state["modelSources"]);
         state.metrics = ParseInfoArray(root_state["metrics"]);
+        state.diagnostics = ParseInfoArray(root_state["diagnostics"]);
+        state.provider_sports = ParseInfoArray(root_state["providerSports"]);
 
         if (root_state["coverage"]["groups"].IsArray())
         {
@@ -2316,6 +3412,10 @@ namespace aegis
                 state.games = demo.games;
             if (state.predictions.empty())
                 state.predictions = demo.predictions;
+            if (state.diagnostics.empty())
+                state.diagnostics = demo.diagnostics;
+            if (state.provider_sports.empty())
+                state.provider_sports = demo.provider_sports;
         }
 
         result.ok = true;

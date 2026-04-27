@@ -28,14 +28,35 @@ if (!(Test-Path $msbuild)) {
     throw "MSBuild not found at $msbuild"
 }
 
+function Assert-LastExit($name) {
+    if ($LASTEXITCODE -ne 0) {
+        throw "$name failed with exit code $LASTEXITCODE"
+    }
+}
+
 Write-Host "== Build $Configuration|$Platform =="
 & $msbuild (Join-Path $root "AegisSportsBettingAI.sln") /p:Configuration=$Configuration /p:Platform=$Platform /m
+Assert-LastExit "MSBuild"
 
 Write-Host "== Smoke tests =="
 & (Join-Path $root "tools\run_smoke_tests.ps1")
+Assert-LastExit "Smoke tests"
+
+Write-Host "== Adapter contract tests =="
+& (Join-Path $root "tools\run_adapter_contract_tests.ps1") -Configuration $Configuration -Platform $Platform
+Assert-LastExit "Adapter contract tests"
+
+Write-Host "== Odds API tests =="
+& (Join-Path $root "tools\run_odds_api_tests.ps1") -Configuration $Configuration -Platform $Platform
+Assert-LastExit "Odds API tests"
 
 Write-Host "== Package =="
 & (Join-Path $root "tools\package_release.ps1") -Configuration $Configuration -Platform $Platform
+Assert-LastExit "Package"
+
+Write-Host "== Guard tests =="
+& (Join-Path $root "tools\run_guard_tests.ps1") -Configuration $Configuration -Platform $Platform -RequirePackage
+Assert-LastExit "Guard tests"
 
 $errors = New-Object System.Collections.Generic.List[string]
 function Assert-Audit($condition, $message) {
@@ -84,7 +105,11 @@ $audit = @(
     "Timestamp: $(Get-Date -Format s)",
     "Build: passed",
     "Smoke tests: passed",
+    "Adapter contract tests: passed",
+    "Odds API tests: passed",
+    "Guard tests: passed",
     "Package hygiene: passed",
+    "Installer readiness: generated",
     "Zip: $zip"
 )
 
@@ -97,6 +122,11 @@ if ($errors.Count -gt 0) {
 
 $audit += "Result: passed"
 $audit | Set-Content -Encoding UTF8 $auditPath
+
+Write-Host "== Installer readiness =="
+& (Join-Path $root "tools\run_installer_readiness.ps1") -Configuration $Configuration -Platform $Platform
+Assert-LastExit "Installer readiness"
+
 if (Test-Path $zip) {
     Remove-Item -Force -LiteralPath $zip
 }

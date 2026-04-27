@@ -6,6 +6,8 @@
 
 namespace aegis
 {
+    constexpr int kConfigSchemaVersion = 2;
+
     struct HttpResponse
     {
         int status_code = 0;
@@ -17,6 +19,9 @@ namespace aegis
 
     struct Config
     {
+        int config_schema_version = kConfigSchemaVersion;
+        int loaded_config_schema_version = kConfigSchemaVersion;
+        bool migrated_config = false;
         std::string auth_base_url = "http://127.0.0.1:8000";
         std::string login_path = "/api/auth/login.php";
         std::string sports_endpoint = "/api/sports-live.php";

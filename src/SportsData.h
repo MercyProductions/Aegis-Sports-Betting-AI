@@ -63,6 +63,10 @@ namespace aegis
         std::vector<BetLink> bet_links;
         std::string freshness_state;
         std::string source_note;
+        std::string source_timestamp;
+        std::string start_time;
+        std::string odds_match_status;
+        std::string odds_match_detail;
     };
 
     struct InfoItem
@@ -125,6 +129,9 @@ namespace aegis
         std::vector<InfoItem> missing_inputs;
         TeamComparison comparison;
         std::string model_version;
+        std::string source_timestamp;
+        std::string data_trust;
+        std::string confidence_band;
         int input_count = 0;
         int missing_input_penalty = 0;
     };
@@ -149,6 +156,8 @@ namespace aegis
         std::vector<InfoItem> tape;
         std::vector<InfoItem> model_sources;
         std::vector<InfoItem> metrics;
+        std::vector<InfoItem> diagnostics;
+        std::vector<InfoItem> provider_sports;
         std::string insight_title = "Why this market matters now";
         std::string insight_copy = "Aegis is watching status, price movement, and model confidence so the board stays useful without pretending uncertainty is certainty.";
         std::string primary_market = "LAL @ GSW - Spread";
@@ -178,9 +187,31 @@ namespace aegis
         std::string requests_last;
     };
 
+    struct OptionalFeedValidationResult
+    {
+        bool ok = false;
+        bool parsed = false;
+        bool reachable = false;
+        int status_code = 0;
+        int records = 0;
+        int errors = 0;
+        int warnings = 0;
+        std::string feed_key;
+        std::string title;
+        std::string contract;
+        std::string status;
+        std::string detail;
+        std::string source_timestamp;
+        std::vector<InfoItem> issues;
+    };
+
     SportsState MakeDemoSportsState();
     SportsState BuildNativeSportsState(int tracked_games, int model_count, int refresh_seconds, const std::string& odds_api_key = "");
     OddsValidationResult ValidateOddsApiKey(const std::string& odds_api_key);
+    std::vector<InfoItem> OptionalFeedSchemaRows();
+    std::string OptionalFeedContractLabel(const std::string& feed_key);
+    OptionalFeedValidationResult ValidateOptionalFeedBody(const std::string& feed_key, const std::string& body);
+    void ApplyOptionalFeedSignals(SportsState& state, const std::vector<OptionalFeedValidationResult>& feeds);
     ParseSportsResult ParseSportsApiResponse(const std::string& body);
     std::string TeamMark(const Team& team);
     std::string PredictionWinner(const Prediction& prediction, const SportsState& state);

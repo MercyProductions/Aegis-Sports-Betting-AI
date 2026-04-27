@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "contract": "aegis.lineups.v1",
+  "generatedAt": "2026-04-27T20:00:00Z",
+  "provider": "Aegis sample lineup feed",
+  "items": [
+    {
+      "gameId": "demo-nba-lal-gsw",
+      "athleteId": "sample-nba-001",
+      "athleteName": "Anthony Davis",
+      "team": "LAL",
+      "role": "starter",
+      "status": "confirmed",
+      "updatedAt": "2026-04-27T20:00:00Z"
+    },
+    {
+      "gameId": "demo-nfl-kc-buf",
+      "athleteId": "sample-nfl-001",
+      "athleteName": "Patrick Mahomes",
+      "team": "KC",
+      "role": "starter",
+      "status": "projected",
+      "updatedAt": "2026-04-27T20:00:00Z"
+    }
+  ]
+}

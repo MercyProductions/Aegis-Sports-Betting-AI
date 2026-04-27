@@ -1,5 +1,7 @@
 #include "Platform.h"
 
+#include "AppVersion.h"
+
 #include <windows.h>
 #include <winhttp.h>
 #include <wincrypt.h>
@@ -31,6 +33,31 @@ namespace aegis
         std::filesystem::path KalshiCredentialsFile()
         {
             return AppDataDirectory() / "kalshi-credentials.dat";
+        }
+
+        bool ParseEnabled(const std::string& value, bool default_value)
+        {
+            const std::string lower = Lower(Trim(value));
+            if (lower == "true" || lower == "1" || lower == "yes" || lower == "on")
+                return true;
+            if (lower == "false" || lower == "0" || lower == "no" || lower == "off")
+                return false;
+            return default_value;
+        }
+
+        void NormalizeConfig(Config& config)
+        {
+            config.config_schema_version = kConfigSchemaVersion;
+            config.refresh_seconds = std::max(5, config.refresh_seconds);
+            config.tracked_games = std::clamp(config.tracked_games, 12, 160);
+            config.model_count = std::clamp(config.model_count, 2, 32);
+            config.bankroll_starting_amount = std::clamp(config.bankroll_starting_amount, 1.0, 10000000.0);
+            config.max_ticket_amount = std::clamp(config.max_ticket_amount, 1.0, 100000.0);
+            config.daily_exposure_limit = std::clamp(config.daily_exposure_limit, 1.0, 1000000.0);
+            config.min_ticket_confidence = std::clamp(config.min_ticket_confidence, 1, 99);
+            config.alert_confidence_threshold = std::clamp(config.alert_confidence_threshold, 50, 99);
+            if (!config.paper_only_mode && !config.require_live_confirmation)
+                config.require_live_confirmation = true;
         }
 
         std::string HexEncode(const std::vector<unsigned char>& bytes)
@@ -288,9 +315,12 @@ namespace aegis
         if (!file)
         {
             config.odds_api_key = LoadOddsApiKey();
+            NormalizeConfig(config);
             return config;
         }
 
+        bool saw_schema_version = false;
+        bool migrated_plain_secret = false;
         std::string line;
         while (std::getline(file, line))
         {
@@ -303,7 +333,14 @@ namespace aegis
 
             const std::string key = Lower(Trim(line.substr(0, eq)));
             const std::string value = Trim(line.substr(eq + 1));
-            if (key == "auth_base_url")
+            if (key == "config_schema_version" || key == "schema_version")
+            {
+                const int parsed = std::atoi(value.c_str());
+                config.loaded_config_schema_version = parsed;
+                config.config_schema_version = parsed;
+                saw_schema_version = true;
+            }
+            else if (key == "auth_base_url")
                 config.auth_base_url = value;
             else if (key == "login_path")
                 config.login_path = value;
@@ -344,27 +381,37 @@ namespace aegis
             else if (key == "min_ticket_confidence")
                 config.min_ticket_confidence = std::clamp(std::atoi(value.c_str()), 1, 99);
             else if (key == "paper_only_mode")
-                config.paper_only_mode = Lower(value) != "false" && value != "0";
+                config.paper_only_mode = ParseEnabled(value, true);
             else if (key == "require_live_confirmation")
-                config.require_live_confirmation = Lower(value) != "false" && value != "0";
+                config.require_live_confirmation = ParseEnabled(value, true);
             else if (key == "notifications_enabled")
-                config.notifications_enabled = Lower(value) != "false" && value != "0";
+                config.notifications_enabled = ParseEnabled(value, true);
             else if (key == "bankroll_analytics_enabled")
-                config.bankroll_analytics_enabled = Lower(value) == "true" || value == "1";
+                config.bankroll_analytics_enabled = ParseEnabled(value, false);
             else if (key == "player_props_enabled")
-                config.player_props_enabled = Lower(value) == "true" || value == "1";
+                config.player_props_enabled = ParseEnabled(value, false);
             else if (key == "responsible_use_accepted")
-                config.responsible_use_accepted = Lower(value) == "true" || value == "1";
+                config.responsible_use_accepted = ParseEnabled(value, false);
             else if (key == "legal_location_confirmed")
-                config.legal_location_confirmed = Lower(value) == "true" || value == "1";
+                config.legal_location_confirmed = ParseEnabled(value, false);
             else if (key == "alert_confidence_threshold")
                 config.alert_confidence_threshold = std::clamp(std::atoi(value.c_str()), 50, 99);
             else if (key == "alert_watchlist_only")
-                config.alert_watchlist_only = Lower(value) != "false" && value != "0";
+                config.alert_watchlist_only = ParseEnabled(value, true);
             else if (key == "alert_line_movement_only")
-                config.alert_line_movement_only = Lower(value) != "false" && value != "0";
+                config.alert_line_movement_only = ParseEnabled(value, true);
             else if (key == "remember_credentials")
-                config.remember_credentials = Lower(value) != "false" && value != "0";
+                config.remember_credentials = ParseEnabled(value, true);
+        }
+
+        if (!saw_schema_version)
+        {
+            config.loaded_config_schema_version = 0;
+            config.migrated_config = true;
+        }
+        else if (config.loaded_config_schema_version < kConfigSchemaVersion)
+        {
+            config.migrated_config = true;
         }
 
         const std::string secure_key = LoadOddsApiKey();
@@ -375,6 +422,7 @@ namespace aegis
         else if (!Trim(config.odds_api_key).empty())
         {
             SaveOddsApiKey(config.odds_api_key);
+            migrated_plain_secret = true;
         }
         const KalshiCredentials kalshi = LoadKalshiCredentials();
         if (kalshi.ok)
@@ -385,6 +433,16 @@ namespace aegis
         else if (!Trim(config.kalshi_key_id).empty() || !Trim(config.kalshi_private_key).empty())
         {
             SaveKalshiCredentials(config.kalshi_key_id, config.kalshi_private_key);
+            migrated_plain_secret = true;
+        }
+
+        NormalizeConfig(config);
+        if (config.migrated_config || migrated_plain_secret)
+        {
+            SaveConfig(config);
+            AppendDiagnosticLine("config_migration loaded_schema=" + std::to_string(config.loaded_config_schema_version) +
+                " current_schema=" + std::to_string(kConfigSchemaVersion) +
+                " plaintext_secret_migrated=" + std::string(migrated_plain_secret ? "1" : "0"));
         }
 
         return config;
@@ -393,9 +451,14 @@ namespace aegis
     bool SaveConfig(const Config& config)
     {
         const std::filesystem::path path = ExecutableDirectory() / "AegisSportsBettingAI.config.ini";
-        std::ofstream file(path, std::ios::trunc);
+        const std::filesystem::path temp_path = path.string() + ".tmp";
+        std::ofstream file(temp_path, std::ios::trunc);
         if (!file)
             return false;
+
+        file << "[meta]\n";
+        file << "config_schema_version=" << kConfigSchemaVersion << "\n";
+        file << "app_version=" << kAppVersion << "\n\n";
 
         file << "[auth]\n";
         file << "auth_base_url=" << config.auth_base_url << "\n";
@@ -444,6 +507,20 @@ namespace aegis
         file << "min_ticket_confidence=" << std::clamp(config.min_ticket_confidence, 1, 99) << "\n";
         file << "paper_only_mode=" << (config.paper_only_mode ? "true" : "false") << "\n";
         file << "require_live_confirmation=" << (config.require_live_confirmation ? "true" : "false") << "\n";
+        file.close();
+        if (!file)
+        {
+            std::error_code remove_error;
+            std::filesystem::remove(temp_path, remove_error);
+            return false;
+        }
+
+        if (!MoveFileExW(temp_path.wstring().c_str(), path.wstring().c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+        {
+            std::error_code remove_error;
+            std::filesystem::remove(temp_path, remove_error);
+            return false;
+        }
         return true;
     }
 

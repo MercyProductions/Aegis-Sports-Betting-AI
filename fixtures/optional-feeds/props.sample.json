@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0",
+  "contract": "aegis.props.v1",
+  "generatedAt": "2026-04-27T20:00:00Z",
+  "provider": "Aegis sample props feed",
+  "items": [
+    {
+      "gameId": "demo-nba-lal-gsw",
+      "athleteId": "sample-nba-001",
+      "athleteName": "Anthony Davis",
+      "team": "LAL",
+      "market": "rebounds",
+      "line": 12.5,
+      "odds": "-110",
+      "book": "SampleBook",
+      "updatedAt": "2026-04-27T20:00:00Z"
+    },
+    {
+      "gameId": "demo-nfl-kc-buf",
+      "athleteId": "sample-nfl-001",
+      "athleteName": "Patrick Mahomes",
+      "team": "KC",
+      "market": "passing yards",
+      "line": 272.5,
+      "odds": "-105",
+      "book": "SampleBook",
+      "updatedAt": "2026-04-27T20:00:00Z"
+    }
+  ]
+}

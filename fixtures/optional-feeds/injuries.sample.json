@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "contract": "aegis.injuries.v1",
+  "generatedAt": "2026-04-27T20:00:00Z",
+  "provider": "Aegis sample injury feed",
+  "items": [
+    {
+      "athleteId": "sample-nba-001",
+      "athleteName": "Anthony Davis",
+      "team": "LAL",
+      "league": "NBA",
+      "status": "probable",
+      "updatedAt": "2026-04-27T20:00:00Z",
+      "source": "team report",
+      "detail": "Sample availability row for contract testing."
+    },
+    {
+      "athleteId": "sample-nfl-001",
+      "athleteName": "Patrick Mahomes",
+      "team": "KC",
+      "league": "NFL",
+      "status": "active",
+      "updatedAt": "2026-04-27T20:00:00Z",
+      "source": "official report",
+      "detail": "Sample active row for contract testing."
+    }
+  ]
+}
