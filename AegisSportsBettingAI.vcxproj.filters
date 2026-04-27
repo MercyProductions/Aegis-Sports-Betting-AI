@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{79EE9693-A852-4B55-931C-22BE71DCE90D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{16527154-64FA-44CC-AEF1-C4062D2C36EA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{266D5964-30F0-46E8-8C50-1B5C6217835E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Json.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\Platform.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\SportsData.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="src\Main.cpp"><Filter>Source Files</Filter></ClCompile>
+    <ClCompile Include="imgui\imgui.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="imgui\backends\imgui_impl_dx11.cpp"><Filter>ImGui</Filter></ClCompile>
+    <ClCompile Include="imgui\backends\imgui_impl_win32.cpp"><Filter>ImGui</Filter></ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\AppVersion.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="src\Json.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="src\Platform.h"><Filter>Header Files</Filter></ClInclude>
+    <ClInclude Include="src\SportsData.h"><Filter>Header Files</Filter></ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AegisSportsBettingAI.config.ini" />
+    <None Include="README.md" />
+  </ItemGroup>
+</Project>

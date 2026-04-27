@@ -1,0 +1,51 @@
+# Build output
+x64/
+Debug/
+Release/
+dist/
+*.obj
+*.pdb
+*.idb
+*.ilk
+*.iobj
+*.ipdb
+*.lib
+*.exp
+*.tlog/
+
+# Visual Studio / local IDE state
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+*.aps
+*.opensdf
+*.sdf
+
+# Runtime captures and generated app data
+diagnostics.log
+provider-health.tsv
+market-snapshots.tsv
+prediction-audit.tsv
+notifications.tsv
+scenario-journal.tsv
+slip-audit.tsv
+exposure-ledger.tsv
+remember.dat
+odds-api-key.dat
+kalshi-credentials.dat
+aegis-report.csv
+aegis-report.pdf
+aegis-provider-health.csv
+aegis-workspace-export.tsv
+aegis_*.png
+
+# Packaged artifacts
+*.zip
+*.7z
+*.rar
+
+# OS clutter
+Thumbs.db
+Desktop.ini

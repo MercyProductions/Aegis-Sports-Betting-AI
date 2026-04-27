@@ -1,0 +1,25 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Release
+        run: msbuild AegisSportsBettingAI.sln /p:Configuration=Release /p:Platform=x64 /m
+
+      - name: Smoke tests
+        shell: pwsh
+        run: ./tools/run_smoke_tests.ps1
