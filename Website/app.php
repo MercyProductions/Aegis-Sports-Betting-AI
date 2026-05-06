@@ -1610,6 +1610,6 @@ $avatarInitials = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $displayN
             window.AEGIS_SPORTS_STATE = <?= json_encode($sportsState, JSON_UNESCAPED_SLASHES); ?>;
         </script>
     <?php endif; ?>
-    <script nonce="<?= sports_e(aegis_sports_product_csp_nonce()); ?>" src="assets/js/aegis.js?v=20260505-security-1"></script>
+    <script nonce="<?= sports_e(aegis_sports_product_csp_nonce()); ?>" src="assets/js/aegis.js?v=20260505-launchfix-1"></script>
 </body>
 </html>

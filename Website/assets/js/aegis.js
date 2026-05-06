@@ -3970,6 +3970,49 @@ document.addEventListener("keydown", (event) => {
         renderPredictions();
     };
 
+    const predictionWinnerLabel = (item = {}) => {
+        const direct = String(item.predictedWinner || "").trim();
+        if (direct && !/^watch\s+/i.test(direct)) {
+            return direct;
+        }
+
+        const comparison = item.teamComparison && typeof item.teamComparison === "object" ? item.teamComparison : {};
+        let side = String(item.predictedWinnerSide || comparison.pickSide || "").trim();
+        if (side !== "away" && side !== "home") {
+            const awayRating = Number(comparison.away?.rating);
+            const homeRating = Number(comparison.home?.rating);
+            if (Number.isFinite(awayRating) && Number.isFinite(homeRating) && awayRating !== homeRating) {
+                side = awayRating > homeRating ? "away" : "home";
+            }
+        }
+
+        if (side === "away" || side === "home") {
+            const team = comparison[side] || {};
+            const label = String(team.name || team.abbr || "").trim();
+            if (label) {
+                return label;
+            }
+        }
+
+        const matchup = String(item.matchup || "").trim();
+        const cleanedPick = String(item.pick || "")
+            .replace(/^postgame review:\s*/i, "")
+            .replace(/^watch\s+/i, "")
+            .replace(/\s+[+-]\d+(?:\.\d+)?.*$/, "")
+            .trim();
+
+        return cleanedPick && cleanedPick !== matchup ? cleanedPick : "No clear side";
+    };
+
+    const predictionWinnerMeta = (item = {}) => {
+        const basis = String(item.predictedWinnerBasis || "").trim();
+        const strength = String(item.predictedWinnerStrength || "").trim();
+        if (basis && strength && basis !== strength) {
+            return `${basis} / ${strength}`;
+        }
+        return basis || strength || `${item.actionLabel || "Signal"} / ${item.risk || "Managed risk"}`;
+    };
+
     const renderPredictionsInto = (container, items = [], limit = 8, firstColumn = "pick") => {
         if (!container) return;
         const rows = items.slice(0, limit).map((entry, index) => {
