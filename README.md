@@ -4,6 +4,8 @@ Native C++/Win32/DirectX11 Dear ImGui desktop client for Aegis Sports Betting AI
 
 Version: `0.6.0` / `Health Center` / build date `2026-04-27`.
 
+The repo now also contains a standalone PHP website product in `Website/`. It has public product pages, local account auth, SEO/security foundations, and a protected `/app` workspace that reuses the same sports data posture as the desktop app: live scoreboard discovery, optional Odds API matching, provider health honesty, and informational-only provider links.
+
 ## Current Data Flow
 
 - Authentication uses the website auth bridge at `/api/auth/login.php`.
@@ -34,6 +36,21 @@ The executable is written to:
 ```text
 x64\Release\AegisSportsBettingAI.exe
 ```
+
+## Standalone Website
+
+Run the sports product website locally with:
+
+```powershell
+cd ".\Website"
+php -S 127.0.0.1:8088 router.php
+```
+
+Open `http://127.0.0.1:8088/` for the product home page, then create a local account and open `http://127.0.0.1:8088/app` for the dashboard. Copy `Website\.env.example` to `Website\.env` to configure the canonical `AEGIS_SITE_URL`, tier limits, refresh cadence, default new-user tier, display name, and an optional `AEGIS_ODDS_API_KEY`.
+
+The website exposes public SEO routes at `/methodology`, `/robots.txt`, `/sitemap.xml`, `/terms`, `/privacy`, and `/responsible-use`. Auth, account, app, and API surfaces stay noindex.
+
+The protected app Settings view includes a local provider setup form. It can save a The Odds API key plus injury, lineup, news, and player-prop feed URLs into ignored website storage and apply those values to the sports engine at runtime.
 
 ## Setup Checklist
 

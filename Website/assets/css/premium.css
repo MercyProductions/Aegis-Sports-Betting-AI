@@ -1,0 +1,3104 @@
+:root {
+    --aegis-premium-blue: #5bbcff;
+    --aegis-premium-blue-2: #1e6dff;
+    --aegis-premium-navy: #071624;
+    --aegis-premium-ink: #020812;
+    --aegis-premium-silver: #eaf4ff;
+    --aegis-good: #31d96b;
+    --aegis-bad: #ff4d5f;
+    --aegis-warn: #ffc857;
+    --aegis-accent-rgb: 91, 188, 255;
+}
+
+body[data-aegis-theme="aegis-green"],
+body[data-aegis-theme="aegis-blue"],
+body[data-aegis-theme="aegis-red"],
+body:not([data-aegis-theme]) {
+    --red: var(--aegis-premium-blue-2);
+    --red-dark: #0a3a9a;
+    --green: var(--aegis-good);
+    --aegis-accent: var(--aegis-premium-blue);
+    --aegis-accent-2: #9fdcff;
+    --aegis-accent-rgb: 91, 188, 255;
+    --aegis-card: rgba(8, 19, 32, 0.88);
+}
+
+.sports-product-page {
+    --sports-page-bg: var(--aegis-premium-ink);
+    --sports-page-panel: rgba(8, 20, 34, 0.9);
+    --sports-page-panel-2: rgba(12, 31, 52, 0.94);
+    --sports-page-line: rgba(172, 214, 255, 0.16);
+    --sports-page-text: #f4f9ff;
+    --sports-page-muted: rgba(221, 236, 255, 0.72);
+    --sports-page-green: var(--aegis-premium-blue);
+    background:
+        linear-gradient(135deg, rgba(91, 188, 255, 0.16), transparent 34%),
+        linear-gradient(225deg, rgba(159, 220, 255, 0.1), transparent 38%),
+        linear-gradient(180deg, #071624, #040b15 62%, #020711);
+}
+
+.sports-product-brand span,
+.sports-product-brand span::before {
+    border-color: var(--aegis-premium-blue);
+}
+
+.sports-product-brand em,
+.sports-product-kicker,
+.sports-product-stat strong,
+.sports-product-check strong {
+    color: var(--aegis-premium-blue);
+}
+
+.sports-product-nav a.is-active,
+.sports-product-actions .is-primary,
+.sports-product-button.is-primary {
+    color: #03101d;
+    border-color: rgba(91, 188, 255, 0.55);
+    background: linear-gradient(135deg, #7ed0ff, #2b7cff);
+    box-shadow: 0 18px 44px rgba(43, 124, 255, 0.28);
+}
+
+.sports-product-status,
+.sports-product-row b,
+.sports-product-flash.success {
+    color: var(--aegis-good);
+}
+
+.sports-product-status::before {
+    background: var(--aegis-good);
+    box-shadow: 0 0 18px rgba(49, 217, 107, 0.5);
+}
+
+.sports-product-terminal,
+.sports-product-card,
+.sports-auth-card,
+.sports-product-flash {
+    box-shadow: 0 28px 90px rgba(0, 7, 18, 0.36), inset 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.sports-reference-page.betedge-page {
+    --betedge-bg: #020811;
+    --betedge-surface: #071522;
+    --betedge-surface-2: #0b1c2d;
+    --betedge-surface-3: #10263c;
+    --betedge-line: rgba(174, 215, 255, 0.16);
+    --betedge-line-strong: rgba(91, 188, 255, 0.38);
+    --betedge-text: #f5faff;
+    --betedge-muted: rgba(222, 237, 255, 0.7);
+    --betedge-soft: rgba(222, 237, 255, 0.46);
+    --betedge-green: var(--aegis-premium-blue);
+    --betedge-green-2: var(--aegis-premium-blue-2);
+    --betedge-red: var(--aegis-bad);
+    --betedge-yellow: var(--aegis-warn);
+    --betedge-blue: var(--aegis-premium-blue);
+}
+
+html,
+.betedge-sidebar,
+.betedge-main,
+.betedge-rail,
+.betedge-topnav,
+.betedge-side-nav,
+.betedge-sport-tabs,
+.betedge-events-row,
+.betedge-picks-table {
+    scrollbar-color: rgba(91, 188, 255, 0.45) rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(91, 188, 255, 0.45);
+    border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.betedge-shell {
+    background:
+        linear-gradient(180deg, rgba(7, 22, 36, 0.98), rgba(2, 8, 17, 1) 60%),
+        #020811;
+}
+
+.betedge-topbar {
+    background: rgba(4, 13, 25, 0.98);
+}
+
+.betedge-brand-mark,
+.betedge-brand-mark::before {
+    border-color: var(--aegis-premium-blue);
+}
+
+.betedge-brand em,
+.betedge-topnav a.is-active,
+.betedge-source-grid code,
+.betedge-market-title {
+    color: var(--aegis-premium-blue);
+}
+
+.betedge-topnav a.is-active::after,
+.betedge-confidence span i,
+.betedge-signal-graph.is-market i,
+.betedge-pick-actions button,
+.betedge-card-head button,
+.sports-reference-place-bet {
+    background: linear-gradient(135deg, #77ccff, #246dff);
+}
+
+.betedge-pro-chip {
+    background: rgba(91, 188, 255, 0.13);
+    color: var(--aegis-premium-blue);
+}
+
+.betedge-pick-row .up,
+.betedge-parlay .up,
+.betedge-statusbar .system,
+.betedge-statusbar .system strong,
+.betedge-event-head em.tone-live,
+.betedge-event-head em.tone-final,
+.betedge-source-grid > div.is-connected strong,
+.betedge-factor-card.is-connected strong,
+.sports-reference-drawer-grid div.is-connected strong,
+.sports-reference-drawer-list div.is-connected strong {
+    color: var(--aegis-good);
+}
+
+.betedge-pro-chip i,
+.betedge-statusbar .system i,
+.betedge-card-head small i {
+    background: var(--aegis-good);
+    box-shadow: 0 0 18px rgba(49, 217, 107, 0.46);
+}
+
+.betedge-analytics-grid .down,
+.betedge-event-head em.tone-alert,
+.sports-product-flash.error {
+    color: var(--aegis-bad);
+}
+
+.betedge-decision-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.8fr);
+    gap: 18px;
+    margin-bottom: 18px;
+    border-color: rgba(91, 188, 255, 0.26);
+    background:
+        linear-gradient(135deg, rgba(91, 188, 255, 0.12), transparent 46%),
+        linear-gradient(180deg, rgba(13, 31, 50, 0.94), rgba(6, 16, 29, 0.96));
+}
+
+.betedge-decision-main {
+    display: grid;
+    gap: 16px;
+}
+
+.betedge-decision-eyebrow {
+    color: var(--aegis-premium-blue);
+    font-size: 0.78rem;
+    font-weight: 850;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.betedge-decision-main h1 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(2rem, 4vw, 3.8rem);
+    line-height: 0.98;
+}
+
+.betedge-decision-main p {
+    max-width: 780px;
+    margin: 0;
+    color: var(--betedge-muted);
+    line-height: 1.6;
+}
+
+.betedge-decision-metrics,
+.betedge-decision-checks,
+.betedge-decision-context {
+    display: grid;
+    gap: 10px;
+}
+
+.betedge-decision-metrics {
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+}
+
+.betedge-decision-metrics div,
+.betedge-decision-checks div,
+.betedge-decision-context div {
+    min-height: 82px;
+    padding: 13px;
+    border: 1px solid rgba(174, 215, 255, 0.13);
+    border-radius: var(--betedge-radius);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.betedge-decision-metrics span,
+.betedge-decision-checks span,
+.betedge-decision-context span {
+    display: block;
+    color: var(--betedge-soft);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.betedge-decision-metrics strong,
+.betedge-decision-checks strong,
+.betedge-decision-context strong {
+    display: block;
+    margin-top: 7px;
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.betedge-decision-metrics small,
+.betedge-decision-checks small,
+.betedge-decision-context small {
+    display: block;
+    margin-top: 5px;
+    color: var(--betedge-muted);
+    line-height: 1.35;
+}
+
+.betedge-decision-rail {
+    display: grid;
+    gap: 12px;
+}
+
+.betedge-decision-grade {
+    display: grid;
+    place-items: center;
+    min-height: 190px;
+    border: 1px solid rgba(91, 188, 255, 0.24);
+    border-radius: var(--betedge-radius);
+    background:
+        radial-gradient(circle at 50% 20%, rgba(91, 188, 255, 0.22), transparent 8rem),
+        rgba(255, 255, 255, 0.035);
+    text-align: center;
+}
+
+.betedge-decision-grade span {
+    color: var(--betedge-soft);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.betedge-decision-grade strong {
+    color: #ffffff;
+    font-size: 4rem;
+    line-height: 1;
+}
+
+.betedge-decision-grade small {
+    color: var(--betedge-muted);
+}
+
+.betedge-check-ok strong {
+    color: var(--aegis-good);
+}
+
+.betedge-check-warn strong {
+    color: var(--aegis-warn);
+}
+
+.betedge-check-bad strong {
+    color: var(--aegis-bad);
+}
+
+.betedge-decision-board-card {
+    margin-bottom: 18px;
+    border-color: rgba(91, 188, 255, 0.22);
+}
+
+.betedge-decision-board {
+    display: grid;
+    gap: 10px;
+}
+
+.betedge-decision-row {
+    display: grid;
+    grid-template-columns: 74px minmax(190px, 1.3fr) repeat(4, minmax(112px, 0.85fr)) minmax(150px, 0.9fr);
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid rgba(174, 215, 255, 0.13);
+    border-radius: var(--betedge-radius);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.betedge-decision-row.is-ok {
+    border-color: rgba(49, 217, 107, 0.28);
+    background: linear-gradient(90deg, rgba(49, 217, 107, 0.08), rgba(255, 255, 255, 0.03));
+}
+
+.betedge-decision-row.is-warn {
+    border-color: rgba(255, 200, 87, 0.22);
+}
+
+.betedge-decision-row.is-bad {
+    border-color: rgba(255, 77, 95, 0.2);
+}
+
+.betedge-rank-badge,
+.betedge-decision-row > div,
+.betedge-decision-action,
+.betedge-decision-board-empty {
+    min-width: 0;
+    padding: 11px;
+    border: 1px solid rgba(174, 215, 255, 0.1);
+    border-radius: var(--betedge-radius);
+    background: rgba(2, 8, 17, 0.34);
+}
+
+.betedge-rank-badge,
+.betedge-decision-row > div {
+    display: grid;
+    gap: 5px;
+}
+
+.betedge-rank-badge {
+    place-items: center;
+    text-align: center;
+}
+
+.betedge-rank-badge span,
+.betedge-decision-row span,
+.betedge-decision-board-empty span {
+    color: var(--betedge-soft);
+    font-size: 0.72rem;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.betedge-rank-badge strong {
+    color: #ffffff;
+    font-size: 1.65rem;
+    line-height: 1;
+}
+
+.betedge-decision-pick strong,
+.betedge-decision-row > div strong,
+.betedge-decision-board-empty strong {
+    color: #ffffff;
+    overflow-wrap: anywhere;
+}
+
+.betedge-decision-pick small,
+.betedge-decision-row > div small {
+    color: var(--betedge-muted);
+    line-height: 1.35;
+}
+
+.betedge-decision-action {
+    display: grid;
+    gap: 5px;
+    align-content: center;
+    border-color: rgba(91, 188, 255, 0.2);
+    color: #ffffff;
+    text-align: left;
+    cursor: pointer;
+}
+
+.betedge-decision-action span {
+    color: #ffffff;
+}
+
+.betedge-decision-action small {
+    color: var(--betedge-muted);
+    font-size: 0.76rem;
+    font-weight: 750;
+    line-height: 1.35;
+    text-transform: none;
+}
+
+.betedge-decision-row.is-ok .betedge-decision-action {
+    border-color: rgba(49, 217, 107, 0.34);
+}
+
+.betedge-decision-row.is-warn .betedge-decision-action {
+    border-color: rgba(255, 200, 87, 0.3);
+}
+
+.betedge-decision-row.is-bad .betedge-decision-action {
+    border-color: rgba(255, 77, 95, 0.28);
+}
+
+.betedge-decision-board-empty {
+    display: grid;
+    gap: 6px;
+}
+
+.betedge-drawer-score {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.betedge-drawer-score > div,
+.sports-reference-drawer-grid div,
+.sports-reference-drawer-list div,
+.sports-reference-drawer-providers a,
+.sports-reference-drawer-providers div {
+    border-radius: var(--betedge-radius);
+}
+
+.betedge-drawer-score > div.is-connected strong,
+.sports-reference-drawer-grid div.is-connected strong,
+.sports-reference-drawer-list div.is-connected strong,
+.sports-reference-drawer-providers div.is-connected strong {
+    color: var(--aegis-good);
+}
+
+.betedge-drawer-score > div.is-partial strong,
+.sports-reference-drawer-grid div.is-partial strong,
+.sports-reference-drawer-list div.is-partial strong,
+.sports-reference-drawer-providers div.is-partial strong {
+    color: var(--aegis-warn);
+}
+
+.betedge-drawer-score > div.needs-setup strong,
+.sports-reference-drawer-grid div.needs-setup strong,
+.sports-reference-drawer-list div.needs-setup strong,
+.sports-reference-drawer-providers div.needs-setup strong {
+    color: var(--aegis-bad);
+}
+
+.betedge-provider-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.betedge-provider-links > div:first-child {
+    grid-column: 1 / -1;
+    border-color: rgba(91, 188, 255, 0.24);
+    background: rgba(91, 188, 255, 0.08);
+}
+
+.betedge-provider-links a {
+    border-color: rgba(174, 215, 255, 0.14);
+}
+
+.betedge-provider-links a.is-live {
+    border-color: rgba(49, 217, 107, 0.32);
+    background: rgba(49, 217, 107, 0.07);
+}
+
+.betedge-readiness-grid div strong,
+.betedge-provider-links strong {
+    overflow-wrap: anywhere;
+}
+
+.betedge-provider-setup-card {
+    border-color: rgba(91, 188, 255, 0.24);
+}
+
+.betedge-provider-readiness {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.betedge-provider-readiness div {
+    min-height: 92px;
+    padding: 13px;
+    border: 1px solid rgba(174, 215, 255, 0.13);
+    border-radius: var(--betedge-radius);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.betedge-provider-readiness span,
+.betedge-provider-form label span {
+    display: block;
+    color: var(--betedge-soft);
+    font-size: 0.72rem;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.betedge-provider-readiness strong {
+    display: block;
+    margin-top: 7px;
+    color: #ffffff;
+}
+
+.betedge-provider-readiness small,
+.betedge-provider-actions small {
+    display: block;
+    margin-top: 6px;
+    color: var(--betedge-muted);
+    line-height: 1.35;
+}
+
+.betedge-provider-readiness .is-connected strong {
+    color: var(--aegis-good);
+}
+
+.betedge-provider-readiness .is-partial strong {
+    color: var(--aegis-warn);
+}
+
+.betedge-provider-readiness .needs-setup strong {
+    color: var(--aegis-bad);
+}
+
+.betedge-provider-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.betedge-provider-form label {
+    display: grid;
+    gap: 7px;
+}
+
+.betedge-provider-form input,
+.betedge-provider-form select {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid rgba(174, 215, 255, 0.18);
+    border-radius: var(--betedge-radius);
+    padding: 0 12px;
+    color: var(--betedge-text);
+    background: rgba(3, 13, 25, 0.86);
+    font: inherit;
+}
+
+.betedge-provider-toggle {
+    display: flex !important;
+    grid-column: 1 / -1;
+    align-items: center;
+    gap: 10px !important;
+}
+
+.betedge-provider-toggle input {
+    width: 18px;
+    min-height: 18px;
+    accent-color: var(--aegis-premium-blue);
+}
+
+.betedge-provider-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.lineforge-execution-command {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto auto;
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.lineforge-execution-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--betedge-soft);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.lineforge-execution-command strong {
+    display: block;
+    color: #fff;
+    font-size: clamp(1.35rem, 2vw, 2.2rem);
+}
+
+.lineforge-execution-command small {
+    display: block;
+    max-width: 760px;
+    margin-top: 6px;
+    color: var(--betedge-muted);
+}
+
+.lineforge-execution-mode,
+.lineforge-execution-actions,
+.lineforge-rule-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.lineforge-execution-mode button,
+.lineforge-execution-actions button,
+.lineforge-rule-actions button {
+    min-height: 38px;
+    border: 1px solid rgba(146, 205, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(7, 18, 38, 0.72);
+    color: var(--betedge-ink);
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.lineforge-execution-mode button {
+    padding: 0 14px;
+}
+
+.lineforge-execution-actions button,
+.lineforge-rule-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 12px;
+}
+
+.lineforge-execution-mode button.is-active,
+.lineforge-execution-actions button:hover,
+.lineforge-rule-actions button:hover {
+    border-color: rgba(88, 190, 255, 0.55);
+    background: rgba(57, 145, 255, 0.17);
+    box-shadow: 0 0 24px rgba(47, 138, 255, 0.18);
+}
+
+.lineforge-execution-actions button.is-danger,
+.lineforge-rule-actions button:last-child {
+    border-color: rgba(255, 92, 120, 0.36);
+    background: rgba(255, 68, 102, 0.12);
+    color: #ffd8df;
+}
+
+.lineforge-execution-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.lineforge-wide-card {
+    grid-column: 1 / -1;
+}
+
+.lineforge-provider-grid,
+.lineforge-balance-grid,
+.lineforge-ledger,
+.lineforge-audit-log,
+.lineforge-rule-list {
+    display: grid;
+    gap: 10px;
+}
+
+.lineforge-provider-grid,
+.lineforge-balance-grid {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.lineforge-provider-grid > div,
+.lineforge-balance-grid > div,
+.lineforge-ledger > div,
+.lineforge-audit-log > div,
+.lineforge-rule-list > article,
+.lineforge-empty-state {
+    min-height: 78px;
+    padding: 13px;
+    border: 1px solid rgba(150, 207, 255, 0.14);
+    border-radius: 8px;
+    background:
+        linear-gradient(140deg, rgba(49, 144, 255, 0.10), rgba(4, 10, 22, 0.2)),
+        rgba(4, 11, 24, 0.58);
+}
+
+.lineforge-rule-list > article {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.4fr) minmax(160px, 1fr) minmax(140px, 0.8fr) auto;
+    gap: 12px;
+    align-items: center;
+}
+
+.lineforge-provider-grid span,
+.lineforge-balance-grid span,
+.lineforge-ledger span,
+.lineforge-audit-log span,
+.lineforge-rule-list span {
+    display: block;
+    color: var(--betedge-soft);
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.lineforge-provider-grid strong,
+.lineforge-balance-grid strong,
+.lineforge-ledger strong,
+.lineforge-audit-log strong,
+.lineforge-rule-list strong {
+    display: block;
+    margin-top: 5px;
+    color: #fff;
+    overflow-wrap: anywhere;
+}
+
+.lineforge-provider-grid small,
+.lineforge-balance-grid small,
+.lineforge-ledger small,
+.lineforge-audit-log small,
+.lineforge-rule-list small,
+.lineforge-provider-grid em {
+    display: block;
+    margin-top: 5px;
+    color: var(--betedge-muted);
+    font-style: normal;
+    overflow-wrap: anywhere;
+}
+
+.lineforge-provider-grid .is-connected strong,
+.lineforge-audit-log .is-connected strong,
+.lineforge-rule-list .is-connected strong {
+    color: var(--aegis-good);
+}
+
+.lineforge-provider-grid .is-partial strong,
+.lineforge-audit-log .is-partial strong,
+.lineforge-rule-list .is-partial strong {
+    color: var(--aegis-warn);
+}
+
+.lineforge-provider-grid .needs-setup strong,
+.lineforge-audit-log .needs-setup strong,
+.lineforge-rule-list .needs-setup strong {
+    color: var(--aegis-bad);
+}
+
+.lineforge-execution-form,
+.lineforge-rule-builder {
+    display: grid;
+    gap: 13px;
+}
+
+.lineforge-execution-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lineforge-rule-builder fieldset {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 14px;
+    border: 1px solid rgba(136, 200, 255, 0.14);
+    border-radius: 8px;
+    background: rgba(7, 16, 33, 0.54);
+}
+
+.lineforge-rule-builder legend {
+    padding: 0 8px;
+    color: #a8dcff;
+    font-size: 0.74rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+}
+
+.lineforge-execution-form label,
+.lineforge-rule-builder label {
+    display: grid;
+    gap: 7px;
+}
+
+.lineforge-execution-form label span,
+.lineforge-rule-builder label span {
+    color: var(--betedge-soft);
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.lineforge-execution-form input,
+.lineforge-execution-form select,
+.lineforge-execution-form textarea,
+.lineforge-rule-builder input,
+.lineforge-rule-builder select {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid rgba(167, 215, 255, 0.16);
+    border-radius: 8px;
+    background: rgba(3, 10, 23, 0.72);
+    color: #fff;
+    padding: 0 12px;
+    outline: none;
+}
+
+.lineforge-execution-form textarea {
+    min-height: 112px;
+    padding: 12px;
+    resize: vertical;
+}
+
+.lineforge-execution-form input:focus,
+.lineforge-execution-form select:focus,
+.lineforge-execution-form textarea:focus,
+.lineforge-rule-builder input:focus,
+.lineforge-rule-builder select:focus {
+    border-color: rgba(96, 190, 255, 0.58);
+    box-shadow: 0 0 0 3px rgba(39, 135, 255, 0.18);
+}
+
+.lineforge-form-wide,
+.lineforge-form-actions,
+.lineforge-check {
+    grid-column: 1 / -1;
+}
+
+.lineforge-check {
+    display: flex !important;
+    align-items: center;
+    grid-template-columns: none !important;
+    gap: 10px;
+}
+
+.lineforge-check input {
+    width: 18px;
+    min-height: 18px;
+}
+
+.lineforge-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lineforge-form-actions small {
+    color: var(--betedge-muted);
+}
+
+.lineforge-execution-result {
+    margin: 14px 0 0;
+    color: var(--betedge-muted);
+}
+
+.lineforge-execution-result[data-tone="success"] {
+    color: var(--aegis-good);
+}
+
+.lineforge-execution-result[data-tone="error"] {
+    color: var(--aegis-bad);
+}
+
+@media (max-width: 1180px) {
+    .betedge-decision-card,
+    .betedge-decision-metrics,
+    .betedge-decision-row,
+    .betedge-drawer-score,
+    .betedge-provider-links,
+    .betedge-provider-readiness,
+    .betedge-provider-form,
+    .lineforge-execution-command,
+    .lineforge-execution-grid,
+    .lineforge-execution-form,
+    .lineforge-rule-builder fieldset,
+    .lineforge-rule-list > article {
+        grid-template-columns: 1fr;
+    }
+
+    .betedge-provider-actions,
+    .lineforge-form-actions,
+    .lineforge-execution-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .lineforge-execution-mode {
+        justify-content: stretch;
+    }
+
+    .lineforge-execution-mode button,
+    .lineforge-execution-actions button,
+    .lineforge-rule-actions button {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 980px) {
+    .betedge-shell {
+        overflow: visible;
+    }
+
+    .betedge-topbar {
+        height: auto;
+        min-height: 0;
+        grid-template-columns: 1fr;
+    }
+
+    .betedge-brand {
+        min-height: 58px;
+        justify-content: center;
+        padding: 14px 18px 10px;
+    }
+
+    .betedge-topnav {
+        min-height: 48px;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        overflow: visible;
+        padding: 0 12px;
+        border-top: 1px solid var(--betedge-line);
+    }
+
+    .betedge-topnav a {
+        min-width: max-content;
+        min-height: 40px;
+        padding: 0 12px;
+    }
+
+    .betedge-userbar {
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px 14px;
+        border-top: 1px solid var(--betedge-line);
+    }
+
+    .betedge-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: visible;
+    }
+
+    .betedge-sidebar {
+        width: 100%;
+        flex: 0 0 auto;
+        overflow-x: auto;
+        overflow-y: hidden;
+        border-right: 0;
+        border-bottom: 1px solid var(--betedge-line);
+        padding: 12px;
+    }
+
+    .betedge-side-nav {
+        display: flex;
+        gap: 10px;
+        min-width: max-content;
+    }
+
+    .betedge-side-nav button {
+        width: 150px;
+        min-height: 68px;
+        flex: 0 0 auto;
+        align-items: center;
+    }
+
+    .betedge-main {
+        width: 100%;
+        min-width: 0;
+        overflow: visible;
+        padding: 14px;
+    }
+
+    .betedge-filter-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .betedge-sport-tabs,
+    .betedge-events-row,
+    .betedge-expanded-events,
+    .betedge-picks-table {
+        overflow-x: auto;
+    }
+
+    .betedge-picks-head,
+    .betedge-pick-row {
+        min-width: 880px;
+    }
+
+    .betedge-lower-grid,
+    .betedge-analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .betedge-statusbar {
+        position: static;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: 44px;
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 640px) {
+    .sports-product-copy h1,
+    .betedge-decision-main h1 {
+        font-size: 2.65rem;
+    }
+
+    .sports-product-terminal-head,
+    .sports-product-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .betedge-userbar {
+        align-items: stretch;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .betedge-user {
+        justify-content: flex-start;
+    }
+}
+
+/* Lineforge premium art direction */
+:root {
+    --lf-mouse-x: 72vw;
+    --lf-mouse-y: 18vh;
+    --lf-blue: #63c7ff;
+    --lf-blue-2: #2368ff;
+    --lf-cyan: #a9f3ff;
+    --lf-violet: #8d7cff;
+    --lf-ink: #02050c;
+    --lf-panel: rgba(7, 16, 30, 0.68);
+    --lf-panel-2: rgba(12, 27, 48, 0.72);
+    --lf-border: rgba(187, 224, 255, 0.16);
+    --lf-border-strong: rgba(99, 199, 255, 0.34);
+    --lf-shadow: 0 30px 120px rgba(0, 8, 24, 0.58);
+}
+
+.lineforge-icon {
+    width: 1em;
+    height: 1em;
+    display: block;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.65;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 10px rgba(99, 199, 255, 0.14));
+}
+
+.lineforge-icon .lf-accent {
+    stroke: var(--lf-cyan);
+}
+
+.lineforge-icon .lf-dot {
+    fill: currentColor;
+    stroke: none;
+}
+
+.betedge-nav-icon,
+.lineforge-section-title,
+.lineforge-panel-label,
+.lineforge-micro-glyphs span,
+.betedge-decision-metrics div > span,
+.betedge-decision-checks div > span,
+.betedge-decision-context div > span,
+.betedge-provider-readiness div > span,
+.betedge-feed-grid div > span,
+.betedge-decision-row div > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.betedge-topnav a {
+    gap: 7px;
+}
+
+.betedge-nav-icon {
+    width: 22px;
+    height: 22px;
+    justify-content: center;
+    border: 1px solid rgba(188, 225, 255, 0.1);
+    border-radius: 7px;
+    color: rgba(232, 244, 255, 0.72);
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.betedge-nav-icon .lineforge-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.betedge-topnav a:hover .betedge-nav-icon,
+.betedge-topnav a.is-active .betedge-nav-icon,
+.betedge-side-nav button:hover .lineforge-icon,
+.betedge-side-nav button.is-active .lineforge-icon,
+.betedge-sport-tabs button:hover .lineforge-icon,
+.betedge-sport-tabs button.is-active .lineforge-icon {
+    color: var(--lf-cyan);
+}
+
+.lineforge-section-title .lineforge-icon {
+    width: 17px;
+    height: 17px;
+    color: var(--lf-cyan);
+}
+
+.betedge-icon-button span {
+    left: 4px;
+    top: 4px;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(188, 225, 255, 0.12);
+    border-radius: 8px;
+    color: rgba(232, 244, 255, 0.78);
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.betedge-icon-button span::before,
+.betedge-icon-button span::after {
+    display: none;
+}
+
+.betedge-icon-button .lineforge-icon {
+    width: 15px;
+    height: 15px;
+}
+
+.betedge-user-avatar {
+    position: relative;
+    overflow: hidden;
+}
+
+.betedge-user-avatar .lineforge-icon {
+    position: absolute;
+    inset: 6px;
+    width: auto;
+    height: auto;
+    color: rgba(169, 243, 255, 0.23);
+}
+
+.betedge-user-avatar b {
+    position: relative;
+    z-index: 1;
+}
+
+.sports-reference-page.betedge-page {
+    min-height: 100vh;
+    color: #f8fbff;
+    background:
+        radial-gradient(circle at 70% 8%, rgba(99, 199, 255, 0.18), transparent 26rem),
+        radial-gradient(circle at 15% 18%, rgba(141, 124, 255, 0.11), transparent 25rem),
+        radial-gradient(circle at 62% 92%, rgba(30, 109, 255, 0.13), transparent 31rem),
+        linear-gradient(180deg, #040916 0%, #02050c 54%, #010309 100%);
+    isolation: isolate;
+}
+
+.sports-reference-page.betedge-page::before,
+.sports-reference-page.betedge-page::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+}
+
+.sports-reference-page.betedge-page::before {
+    background:
+        linear-gradient(rgba(130, 202, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(130, 202, 255, 0.055) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 74%, transparent 100%);
+    animation: lineforgeGridDrift 28s linear infinite;
+}
+
+.sports-reference-page.betedge-page::after {
+    z-index: -1;
+    background:
+        radial-gradient(circle at var(--lf-mouse-x) var(--lf-mouse-y), rgba(99, 199, 255, 0.18), transparent 22rem),
+        repeating-radial-gradient(circle at 30% 10%, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 5px);
+    mix-blend-mode: screen;
+    opacity: 0.72;
+}
+
+.betedge-shell {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(180, 219, 255, 0.12);
+    background:
+        linear-gradient(180deg, rgba(8, 18, 35, 0.82), rgba(2, 5, 12, 0.96)),
+        rgba(2, 5, 12, 0.94);
+    box-shadow: var(--lf-shadow), inset 0 1px rgba(255, 255, 255, 0.07);
+}
+
+.betedge-shell::before,
+.betedge-shell::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.betedge-shell::before {
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(circle at 72% 0%, rgba(99, 199, 255, 0.16), transparent 24rem),
+        radial-gradient(circle at 8% 42%, rgba(141, 124, 255, 0.09), transparent 28rem),
+        linear-gradient(115deg, transparent 0 34%, rgba(255, 255, 255, 0.035) 42%, transparent 50% 100%);
+}
+
+.betedge-shell::after {
+    inset: 0;
+    z-index: 1;
+    background-image:
+        linear-gradient(90deg, transparent, rgba(180, 220, 255, 0.045), transparent),
+        repeating-linear-gradient(0deg, transparent 0 9px, rgba(255, 255, 255, 0.018) 10px);
+    opacity: 0.55;
+    animation: lineforgeScan 12s ease-in-out infinite;
+}
+
+.betedge-shell > * {
+    position: relative;
+    z-index: 2;
+}
+
+.betedge-topbar {
+    border-bottom: 1px solid rgba(188, 225, 255, 0.13);
+    background: rgba(2, 8, 17, 0.72);
+    backdrop-filter: blur(24px) saturate(1.2);
+    box-shadow: 0 1px rgba(255, 255, 255, 0.04), 0 18px 60px rgba(0, 6, 16, 0.34);
+}
+
+.betedge-brand {
+    gap: 13px;
+}
+
+.lineforge-brand-logo {
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    filter: drop-shadow(0 0 22px rgba(99, 199, 255, 0.34));
+}
+
+.lineforge-brand-logo-app {
+    width: 238px;
+    height: 52px;
+}
+
+.lineforge-brand-logo-public {
+    width: 210px;
+    height: 48px;
+}
+
+.sports-product-terminal-logo {
+    width: 150px;
+    height: 44px;
+    object-fit: cover;
+    object-position: center;
+    filter: drop-shadow(0 0 18px rgba(99, 199, 255, 0.28));
+}
+
+.betedge-brand strong,
+.sports-product-brand strong {
+    color: #ffffff;
+    font-weight: 900;
+}
+
+.betedge-brand em,
+.sports-product-brand em {
+    color: var(--lf-blue);
+    font-style: normal;
+}
+
+.betedge-brand-mark {
+    position: relative;
+    border: 1px solid rgba(99, 199, 255, 0.62);
+    background:
+        radial-gradient(circle at 35% 28%, rgba(169, 243, 255, 0.85), transparent 0.32rem),
+        linear-gradient(135deg, rgba(99, 199, 255, 0.24), rgba(35, 104, 255, 0.12));
+    box-shadow: 0 0 30px rgba(99, 199, 255, 0.32), inset 0 0 20px rgba(99, 199, 255, 0.16);
+}
+
+.betedge-brand-mark::before {
+    border-color: rgba(169, 243, 255, 0.7);
+    transform: rotate(45deg) scale(0.72);
+}
+
+.betedge-topnav a,
+.betedge-side-nav button,
+.betedge-sport-tabs button {
+    transition: color 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.betedge-topnav a:hover,
+.betedge-topnav a.is-active {
+    color: #ffffff;
+}
+
+.betedge-topnav a.is-active::after {
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, var(--lf-blue), var(--lf-cyan), transparent);
+    box-shadow: 0 0 24px rgba(99, 199, 255, 0.62);
+}
+
+.betedge-sidebar {
+    border-right: 1px solid rgba(188, 225, 255, 0.12);
+    background:
+        linear-gradient(180deg, rgba(5, 13, 26, 0.84), rgba(2, 7, 16, 0.92)),
+        rgba(4, 10, 19, 0.86);
+    backdrop-filter: blur(22px);
+}
+
+.betedge-side-nav button {
+    border: 1px solid transparent;
+}
+
+.betedge-side-nav button:hover,
+.betedge-side-nav button.is-active {
+    border-color: rgba(99, 199, 255, 0.18);
+    background: linear-gradient(135deg, rgba(99, 199, 255, 0.1), rgba(255, 255, 255, 0.025));
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.055), 0 12px 34px rgba(0, 8, 24, 0.24);
+}
+
+.betedge-side-nav button.is-active::before {
+    background: linear-gradient(180deg, var(--lf-cyan), var(--lf-blue-2));
+    box-shadow: 0 0 24px rgba(99, 199, 255, 0.72);
+}
+
+.betedge-main {
+    background:
+        radial-gradient(circle at 62% 0%, rgba(99, 199, 255, 0.08), transparent 26rem),
+        radial-gradient(circle at 0% 50%, rgba(141, 124, 255, 0.055), transparent 24rem);
+}
+
+.betedge-card,
+.betedge-event-card,
+.betedge-market-card,
+.betedge-decision-row,
+.sports-reference-drawer-panel,
+.sports-reference-drawer-grid div,
+.sports-reference-drawer-list div,
+.sports-reference-drawer-providers a,
+.sports-reference-drawer-providers div {
+    border-color: var(--lf-border);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.022)),
+        var(--lf-panel);
+    box-shadow:
+        0 18px 70px rgba(0, 7, 20, 0.32),
+        inset 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 -1px rgba(99, 199, 255, 0.045);
+    backdrop-filter: blur(22px) saturate(1.18);
+}
+
+.betedge-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.betedge-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+        linear-gradient(135deg, rgba(169, 243, 255, 0.11), transparent 26%),
+        linear-gradient(315deg, rgba(35, 104, 255, 0.12), transparent 24%);
+    opacity: 0.65;
+}
+
+.betedge-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.betedge-card:hover,
+.betedge-event-card:hover,
+.betedge-pick-row:hover,
+.betedge-decision-row:hover {
+    transform: translateY(-2px);
+    border-color: rgba(99, 199, 255, 0.32);
+    box-shadow:
+        0 24px 90px rgba(0, 11, 32, 0.44),
+        0 0 42px rgba(99, 199, 255, 0.1),
+        inset 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.lineforge-hero {
+    min-height: 560px;
+    grid-template-columns: minmax(0, 1.18fr) minmax(300px, 0.72fr);
+    padding: 26px;
+    border-color: rgba(99, 199, 255, 0.3);
+    background:
+        radial-gradient(circle at 72% 18%, rgba(99, 199, 255, 0.22), transparent 19rem),
+        radial-gradient(circle at 22% 0%, rgba(141, 124, 255, 0.16), transparent 18rem),
+        linear-gradient(135deg, rgba(8, 26, 49, 0.84), rgba(3, 8, 18, 0.94) 58%, rgba(1, 3, 10, 0.98));
+}
+
+.lineforge-hero[hidden],
+[data-sports-dashboard-hero][hidden] {
+    display: none !important;
+}
+
+.lineforge-hero::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+        linear-gradient(90deg, rgba(2, 5, 12, 0.98) 0%, rgba(3, 9, 19, 0.88) 33%, rgba(3, 9, 19, 0.25) 61%, rgba(2, 5, 12, 0.38) 100%),
+        radial-gradient(circle at 68% 50%, rgba(99, 199, 255, 0.18), transparent 22rem),
+        url("../images/lineforge-hero-cinematic.png") right center / cover no-repeat;
+    opacity: 0.88;
+}
+
+.lineforge-hero::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+        linear-gradient(105deg, transparent 0 28%, rgba(255, 255, 255, 0.08) 36%, transparent 48% 100%),
+        linear-gradient(rgba(99, 199, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 199, 255, 0.04) 1px, transparent 1px);
+    background-size: auto, 42px 42px, 42px 42px;
+    opacity: 0.72;
+}
+
+.betedge-decision-eyebrow {
+    display: inline-flex;
+    width: max-content;
+    align-items: center;
+    gap: 9px;
+    min-height: 30px;
+    padding: 0 11px;
+    border: 1px solid rgba(99, 199, 255, 0.24);
+    border-radius: 999px;
+    background: rgba(99, 199, 255, 0.075);
+    color: var(--lf-cyan);
+}
+
+.betedge-decision-eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--lf-cyan);
+    box-shadow: 0 0 18px rgba(169, 243, 255, 0.8);
+}
+
+.betedge-decision-main h1 {
+    max-width: 820px;
+    color: #ffffff;
+    font-size: 4.35rem;
+    line-height: 0.96;
+    font-weight: 950;
+    letter-spacing: 0;
+    text-wrap: balance;
+    text-shadow: 0 0 54px rgba(99, 199, 255, 0.13);
+}
+
+.betedge-decision-main p {
+    max-width: 760px;
+    color: rgba(230, 242, 255, 0.76);
+    font-size: 1.04rem;
+}
+
+.lineforge-trust-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.lineforge-trust-strip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 0 11px;
+    border: 1px solid rgba(188, 225, 255, 0.13);
+    border-radius: 999px;
+    color: rgba(232, 244, 255, 0.72);
+    background: rgba(255, 255, 255, 0.045);
+    font-size: 0.74rem;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.lineforge-micro-glyphs {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(78px, 1fr));
+    gap: 9px;
+    max-width: 780px;
+}
+
+.lineforge-micro-glyphs span {
+    min-height: 46px;
+    justify-content: center;
+    padding: 0 10px;
+    border: 1px solid rgba(188, 225, 255, 0.11);
+    border-radius: 12px;
+    color: rgba(232, 244, 255, 0.76);
+    background:
+        radial-gradient(circle at 50% 0%, rgba(99, 199, 255, 0.13), transparent 74%),
+        rgba(255, 255, 255, 0.035);
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.lineforge-micro-glyphs .lineforge-icon {
+    width: 17px;
+    height: 17px;
+    color: var(--lf-cyan);
+}
+
+.lineforge-micro-glyphs b {
+    min-width: 0;
+    overflow: hidden;
+    color: inherit;
+    font-size: 0.68rem;
+    font-weight: 850;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.lineforge-hero-visual {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(230px, 1fr) minmax(180px, 0.72fr);
+    gap: 13px;
+    min-height: 250px;
+    perspective: 1200px;
+}
+
+.lineforge-float-panel {
+    position: relative;
+    display: grid;
+    gap: 8px;
+    min-height: 118px;
+    padding: 15px;
+    border: 1px solid rgba(188, 225, 255, 0.16);
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.035)),
+        rgba(5, 14, 27, 0.72);
+    box-shadow: 0 24px 72px rgba(0, 8, 24, 0.36), inset 0 1px rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    animation: lineforgeFloat 7s ease-in-out infinite;
+}
+
+.lineforge-float-panel:nth-child(2) {
+    animation-delay: -1.4s;
+}
+
+.lineforge-float-panel:nth-child(3) {
+    animation-delay: -2.8s;
+}
+
+.lineforge-float-panel:nth-child(4) {
+    animation-delay: -4.2s;
+}
+
+.lineforge-primary-signal {
+    grid-row: span 2;
+    min-height: 250px;
+}
+
+.lineforge-panel-label {
+    color: var(--lf-cyan);
+}
+
+.lineforge-panel-label .lineforge-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.lineforge-panel-label span {
+    min-width: 0;
+}
+
+.lineforge-float-panel span {
+    color: var(--lf-cyan);
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.lineforge-float-panel strong {
+    color: #ffffff;
+    font-size: 1.45rem;
+    line-height: 1.05;
+}
+
+.lineforge-primary-signal strong {
+    font-size: 2.35rem;
+}
+
+.lineforge-float-panel small {
+    color: rgba(224, 239, 255, 0.68);
+    line-height: 1.35;
+}
+
+.lineforge-mini-bars,
+.lineforge-tape-line {
+    display: flex;
+    align-items: end;
+    gap: 7px;
+    min-height: 72px;
+    margin-top: auto;
+}
+
+.lineforge-mini-bars i {
+    width: 100%;
+    height: var(--h);
+    min-height: 16px;
+    border-radius: 999px 999px 4px 4px;
+    background: linear-gradient(180deg, var(--lf-cyan), var(--lf-blue-2));
+    box-shadow: 0 0 22px rgba(99, 199, 255, 0.22);
+    animation: lineforgeBar 4.8s ease-in-out infinite;
+}
+
+.lineforge-mini-bars i:nth-child(even) {
+    animation-delay: -1.4s;
+}
+
+.lineforge-tape-line {
+    align-items: center;
+    min-height: 28px;
+}
+
+.lineforge-tape-line i {
+    flex: 1;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(99, 199, 255, 0.1), var(--lf-cyan), rgba(99, 199, 255, 0.1));
+    box-shadow: 0 0 18px rgba(99, 199, 255, 0.38);
+}
+
+.lineforge-ring {
+    width: 68px;
+    height: 68px;
+    border-radius: 999px;
+    background:
+        radial-gradient(circle, rgba(5, 14, 27, 0.92) 0 56%, transparent 57%),
+        conic-gradient(var(--lf-cyan) 0 var(--p), rgba(255, 255, 255, 0.08) var(--p) 100%);
+    box-shadow: 0 0 36px rgba(99, 199, 255, 0.18), inset 0 0 18px rgba(99, 199, 255, 0.08);
+}
+
+.betedge-decision-metrics div,
+.betedge-decision-checks div,
+.betedge-decision-context div {
+    border-color: rgba(188, 225, 255, 0.12);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025));
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
+}
+
+.betedge-decision-metrics div > span .lineforge-icon,
+.betedge-decision-checks div > span .lineforge-icon,
+.betedge-decision-context div > span .lineforge-icon,
+.betedge-provider-readiness div > span .lineforge-icon,
+.betedge-feed-grid div > span .lineforge-icon,
+.betedge-decision-row div > span .lineforge-icon {
+    width: 15px;
+    height: 15px;
+    color: var(--lf-cyan);
+}
+
+.betedge-decision-grade {
+    position: relative;
+    overflow: hidden;
+    min-height: 210px;
+    border-color: rgba(99, 199, 255, 0.28);
+    background:
+        radial-gradient(circle at 50% 24%, rgba(99, 199, 255, 0.32), transparent 9rem),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
+}
+
+.betedge-decision-grade::after {
+    content: "";
+    position: absolute;
+    inset: auto 16% 18px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(169, 243, 255, 0.8), transparent);
+    box-shadow: 0 0 22px rgba(169, 243, 255, 0.48);
+}
+
+.betedge-decision-grade strong {
+    font-size: 4.5rem;
+    text-shadow: 0 0 42px rgba(99, 199, 255, 0.25);
+}
+
+.betedge-filter-bar,
+.betedge-sport-tabs {
+    border: 1px solid rgba(188, 225, 255, 0.1);
+    border-radius: 14px;
+    padding: 10px;
+    background: rgba(5, 14, 27, 0.46);
+    backdrop-filter: blur(18px);
+}
+
+.betedge-topnav,
+.betedge-sidebar,
+.betedge-side-nav,
+.betedge-sport-tabs {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.betedge-topnav::-webkit-scrollbar,
+.betedge-sidebar::-webkit-scrollbar,
+.betedge-side-nav::-webkit-scrollbar,
+.betedge-sport-tabs::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+    background: transparent;
+}
+
+.betedge-sport-tabs button {
+    border: 1px solid rgba(188, 225, 255, 0.08);
+}
+
+.betedge-sport-tabs button:hover,
+.betedge-sport-tabs button.is-active {
+    border-color: rgba(99, 199, 255, 0.26);
+    background: linear-gradient(135deg, rgba(99, 199, 255, 0.15), rgba(255, 255, 255, 0.035));
+    box-shadow: 0 12px 34px rgba(0, 8, 24, 0.26), inset 0 1px rgba(255, 255, 255, 0.075);
+}
+
+.betedge-decision-row {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.026)),
+        rgba(5, 14, 27, 0.66);
+}
+
+.betedge-rank-badge strong {
+    color: var(--lf-cyan);
+    text-shadow: 0 0 28px rgba(99, 199, 255, 0.42);
+}
+
+.betedge-event-card,
+.betedge-pick-row,
+.betedge-market-card {
+    transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.betedge-statusbar {
+    border-top: 1px solid rgba(188, 225, 255, 0.1);
+    background: rgba(2, 8, 17, 0.74);
+    backdrop-filter: blur(18px);
+}
+
+.betedge-statusbar span {
+    animation: lineforgeTapePulse 6s ease-in-out infinite;
+}
+
+.betedge-drawer {
+    backdrop-filter: blur(8px);
+}
+
+.sports-reference-drawer-panel {
+    border-color: rgba(99, 199, 255, 0.24);
+    background:
+        radial-gradient(circle at 82% 0%, rgba(99, 199, 255, 0.16), transparent 18rem),
+        linear-gradient(180deg, rgba(8, 20, 38, 0.94), rgba(2, 6, 14, 0.98));
+}
+
+.sports-product-page {
+    background:
+        radial-gradient(circle at 72% 8%, rgba(99, 199, 255, 0.18), transparent 28rem),
+        radial-gradient(circle at 16% 18%, rgba(141, 124, 255, 0.12), transparent 26rem),
+        linear-gradient(180deg, #040916, #010309 82%);
+}
+
+.sports-product-hero {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: min(760px, calc(100vh - 96px));
+    border-bottom: 1px solid rgba(188, 225, 255, 0.1);
+    background:
+        radial-gradient(circle at 72% 18%, rgba(99, 199, 255, 0.17), transparent 28rem),
+        linear-gradient(180deg, rgba(4, 9, 22, 0.2), rgba(1, 3, 9, 0.92));
+}
+
+.sports-product-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(1, 3, 9, 0.95), rgba(1, 3, 9, 0.42) 48%, rgba(1, 3, 9, 0.15)),
+        linear-gradient(rgba(99, 199, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 199, 255, 0.04) 1px, transparent 1px);
+    background-size: auto, 52px 52px, 52px 52px;
+    mask-image: radial-gradient(circle at 55% 32%, #000, transparent 72%);
+}
+
+.sports-product-hero::after {
+    content: "";
+    position: absolute;
+    inset: -2% 0;
+    z-index: 0;
+    pointer-events: none;
+    background: url("../images/lineforge-hero-cinematic.png") right center / cover no-repeat;
+    opacity: 0.66;
+    mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.25) 34%, #000 55%, #000 100%);
+}
+
+.sports-product-copy,
+.sports-product-terminal {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes lineforgeGridDrift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(54px, 54px, 0); }
+}
+
+@keyframes lineforgeScan {
+    0%, 100% { transform: translateX(-12%); opacity: 0.4; }
+    50% { transform: translateX(12%); opacity: 0.72; }
+}
+
+@keyframes lineforgeFloat {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -8px, 0); }
+}
+
+@keyframes lineforgeBar {
+    0%, 100% { filter: brightness(1); transform: scaleY(0.92); }
+    50% { filter: brightness(1.24); transform: scaleY(1.04); }
+}
+
+@keyframes lineforgeTapePulse {
+    0%, 100% { opacity: 0.72; }
+    50% { opacity: 1; }
+}
+
+@media (max-width: 1180px) {
+    .lineforge-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .lineforge-micro-glyphs {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .lineforge-hero-visual {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .betedge-decision-main h1 {
+        font-size: 3rem;
+    }
+
+    .lineforge-hero {
+        padding: 18px;
+    }
+
+    .lineforge-micro-glyphs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lineforge-hero-visual {
+        grid-template-columns: 1fr;
+    }
+
+    .lineforge-primary-signal {
+        min-height: 190px;
+    }
+
+    .lineforge-float-panel {
+        min-height: 110px;
+    }
+}
+
+.lineforge-arb-command {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) minmax(220px, auto);
+    gap: 18px;
+    align-items: center;
+    margin-bottom: 18px;
+    background:
+        radial-gradient(circle at 12% 0%, rgba(73, 183, 255, 0.2), transparent 30%),
+        radial-gradient(circle at 90% 18%, rgba(35, 89, 255, 0.18), transparent 34%),
+        rgba(4, 11, 26, 0.74);
+}
+
+.lineforge-arb-command strong {
+    display: block;
+    color: #fff;
+    font-size: clamp(1.35rem, 2vw, 2.25rem);
+}
+
+.lineforge-arb-command small,
+.lineforge-arb-status small {
+    display: block;
+    margin-top: 6px;
+    color: var(--betedge-muted);
+}
+
+.lineforge-arb-status {
+    padding: 14px 16px;
+    border: 1px solid rgba(127, 205, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(2, 10, 25, 0.72);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.lineforge-arb-status span,
+.lineforge-arb-summary-card span,
+.lineforge-arb-provider span,
+.lineforge-arb-signal span,
+.lineforge-arb-reject span,
+.lineforge-arb-drawer-head span {
+    color: var(--betedge-soft);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.lineforge-arb-status strong {
+    margin-top: 6px;
+    color: #fff;
+    font-size: 1.08rem;
+}
+
+.lineforge-arb-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.lineforge-arb-summary,
+.lineforge-arb-provider-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.lineforge-arb-provider-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.lineforge-arb-summary-card,
+.lineforge-arb-provider,
+.lineforge-arb-signal,
+.lineforge-arb-reject,
+.lineforge-arb-odds-row,
+.lineforge-arb-stake-leg,
+.lineforge-arb-stake-total,
+.lineforge-arb-consensus-row,
+.lineforge-arb-warning,
+.lineforge-arb-check,
+.lineforge-arb-empty {
+    border: 1px solid rgba(139, 205, 255, 0.14);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+        rgba(3, 11, 26, 0.7);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.lineforge-arb-summary-card {
+    min-height: 118px;
+    padding: 16px;
+}
+
+.lineforge-arb-summary-card strong {
+    display: block;
+    margin-top: 9px;
+    color: #fff;
+    font-size: 1.55rem;
+}
+
+.lineforge-arb-summary-card small,
+.lineforge-arb-provider small,
+.lineforge-arb-signal small,
+.lineforge-arb-reject small,
+.lineforge-arb-odds-row small,
+.lineforge-arb-stake-leg small,
+.lineforge-arb-stake-total small,
+.lineforge-arb-consensus-row small,
+.lineforge-arb-empty span {
+    display: block;
+    margin-top: 7px;
+    color: var(--betedge-muted);
+    line-height: 1.45;
+}
+
+.lineforge-arb-summary-card.is-good {
+    border-color: rgba(49, 217, 107, 0.24);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 28px rgba(49, 217, 107, 0.06);
+}
+
+.lineforge-arb-summary-card.is-warn {
+    border-color: rgba(255, 194, 87, 0.24);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 28px rgba(255, 194, 87, 0.06);
+}
+
+.lineforge-arb-provider {
+    min-height: 132px;
+    padding: 15px;
+}
+
+.lineforge-arb-provider strong {
+    display: block;
+    margin-top: 8px;
+    color: #fff;
+    text-transform: capitalize;
+}
+
+.lineforge-arb-provider.is-connected,
+.lineforge-arb-provider.is-configured,
+.lineforge-arb-provider.is-market_data {
+    border-color: rgba(49, 217, 107, 0.2);
+}
+
+.lineforge-arb-provider.is-needs_key,
+.lineforge-arb-provider.is-not_configured,
+.lineforge-arb-provider.is-requires_partner_access {
+    border-color: rgba(255, 194, 87, 0.2);
+}
+
+.lineforge-arb-table {
+    overflow: hidden;
+}
+
+.lineforge-arb-table-scroll {
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.lineforge-arb-row {
+    display: grid;
+    grid-template-columns: 92px 210px 130px 150px 120px 84px 150px 120px 84px 82px 86px 92px 72px 76px 92px;
+    gap: 10px;
+    align-items: center;
+    min-width: 1710px;
+    padding: 13px 14px;
+    border-bottom: 1px solid rgba(145, 203, 255, 0.09);
+    color: var(--betedge-muted);
+}
+
+.lineforge-arb-row:not(.lineforge-arb-head):hover {
+    background: rgba(66, 157, 255, 0.055);
+}
+
+.lineforge-arb-head {
+    color: var(--betedge-soft);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.lineforge-arb-row strong,
+.lineforge-arb-row b {
+    color: #fff;
+}
+
+.lineforge-arb-row strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lineforge-arb-roi,
+.lineforge-arb-profit {
+    color: var(--aegis-good);
+}
+
+.lineforge-arb-grade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+    min-width: 40px;
+    min-height: 28px;
+    padding: 0 9px;
+    border: 1px solid rgba(128, 207, 255, 0.18);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.lineforge-arb-grade.grade-ap,
+.lineforge-arb-grade.grade-a {
+    border-color: rgba(49, 217, 107, 0.4);
+    background: rgba(49, 217, 107, 0.12);
+    color: #c9ffd6;
+}
+
+.lineforge-arb-grade.grade-b {
+    border-color: rgba(85, 186, 255, 0.38);
+    background: rgba(65, 153, 255, 0.12);
+    color: #d4efff;
+}
+
+.lineforge-arb-grade.grade-c,
+.lineforge-arb-grade.grade-d {
+    border-color: rgba(255, 194, 87, 0.34);
+    background: rgba(255, 194, 87, 0.11);
+    color: #ffe1a9;
+}
+
+.lineforge-arb-grade.grade-f {
+    border-color: rgba(255, 92, 120, 0.34);
+    background: rgba(255, 68, 102, 0.12);
+    color: #ffd8df;
+}
+
+.lineforge-arb-row button,
+.lineforge-arb-drawer-head button {
+    min-height: 34px;
+    border: 1px solid rgba(119, 203, 255, 0.25);
+    border-radius: 8px;
+    background: rgba(51, 143, 255, 0.14);
+    color: #e9f7ff;
+    font-weight: 850;
+    cursor: pointer;
+}
+
+.lineforge-arb-row button:hover,
+.lineforge-arb-drawer-head button:hover {
+    border-color: rgba(119, 203, 255, 0.55);
+    box-shadow: 0 0 22px rgba(56, 155, 255, 0.18);
+}
+
+.lineforge-arb-signal-board,
+.lineforge-arb-rejected,
+.lineforge-arb-drawer-grid section > div {
+    display: grid;
+    gap: 10px;
+}
+
+.lineforge-arb-signal,
+.lineforge-arb-reject {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+}
+
+.lineforge-arb-signal strong,
+.lineforge-arb-reject strong,
+.lineforge-arb-empty strong {
+    display: block;
+    margin-top: 6px;
+    color: #fff;
+}
+
+.lineforge-arb-signal b {
+    color: var(--aegis-good);
+    font-size: 1.05rem;
+}
+
+.lineforge-arb-reject b {
+    display: block;
+    color: #fff;
+}
+
+.lineforge-arb-reject em {
+    display: block;
+    margin-top: 5px;
+    color: var(--betedge-soft);
+    font-size: 0.78rem;
+}
+
+.lineforge-arb-empty {
+    padding: 16px;
+}
+
+.lineforge-arb-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    justify-content: flex-end;
+    padding: 18px;
+    background: rgba(0, 4, 14, 0.58);
+    backdrop-filter: blur(14px);
+}
+
+.lineforge-arb-drawer[hidden] {
+    display: none !important;
+}
+
+.lineforge-arb-drawer-panel {
+    width: min(1040px, 100%);
+    max-height: calc(100vh - 36px);
+    overflow: auto;
+    border: 1px solid rgba(141, 210, 255, 0.2);
+    border-radius: 12px;
+    background:
+        radial-gradient(circle at 15% 0%, rgba(77, 179, 255, 0.14), transparent 36%),
+        linear-gradient(180deg, rgba(8, 20, 45, 0.96), rgba(3, 8, 20, 0.98));
+    box-shadow:
+        0 34px 120px rgba(0, 0, 0, 0.58),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.lineforge-arb-drawer-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 20px;
+    border-bottom: 1px solid rgba(139, 205, 255, 0.14);
+    background: rgba(5, 13, 29, 0.92);
+    backdrop-filter: blur(10px);
+}
+
+.lineforge-arb-drawer-head strong {
+    display: block;
+    margin-top: 6px;
+    color: #fff;
+    font-size: 1.25rem;
+}
+
+.lineforge-arb-drawer-head small {
+    display: block;
+    margin-top: 5px;
+    color: var(--betedge-muted);
+}
+
+.lineforge-arb-drawer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 18px;
+}
+
+.lineforge-arb-drawer-grid section {
+    min-width: 0;
+}
+
+.lineforge-arb-drawer-grid h3 {
+    margin: 0 0 10px;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.lineforge-arb-odds-row,
+.lineforge-arb-stake-leg,
+.lineforge-arb-stake-total,
+.lineforge-arb-consensus-row,
+.lineforge-arb-warning,
+.lineforge-arb-check {
+    padding: 12px;
+}
+
+.lineforge-arb-odds-row {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr) auto;
+    gap: 9px;
+    align-items: center;
+}
+
+.lineforge-arb-odds-row.is-best {
+    border-color: rgba(49, 217, 107, 0.32);
+    background:
+        linear-gradient(180deg, rgba(49, 217, 107, 0.09), rgba(49, 217, 107, 0.02)),
+        rgba(3, 11, 26, 0.7);
+}
+
+.lineforge-arb-odds-row strong,
+.lineforge-arb-stake-leg strong,
+.lineforge-arb-stake-total strong,
+.lineforge-arb-consensus-row strong {
+    color: #fff;
+}
+
+.lineforge-arb-odds-row b {
+    color: var(--aegis-good);
+}
+
+.lineforge-arb-odds-row small {
+    grid-column: 1 / -1;
+}
+
+.lineforge-arb-stake-leg,
+.lineforge-arb-stake-total,
+.lineforge-arb-consensus-row {
+    display: grid;
+    gap: 6px;
+}
+
+.lineforge-arb-stake-total {
+    border-color: rgba(49, 217, 107, 0.28);
+}
+
+.lineforge-arb-warning {
+    border-color: rgba(255, 194, 87, 0.22);
+    color: #ffe1a9;
+}
+
+.lineforge-arb-warning.is-clear {
+    border-color: rgba(49, 217, 107, 0.24);
+    color: #c9ffd6;
+}
+
+.lineforge-arb-check {
+    color: var(--betedge-muted);
+}
+
+.lineforge-arb-check::before {
+    content: "";
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 8px;
+    border-radius: 999px;
+    background: var(--aegis-premium-blue);
+    box-shadow: 0 0 14px rgba(91, 188, 255, 0.5);
+}
+
+.lineforge-arb-drawer pre {
+    min-height: 160px;
+    margin: 0;
+    padding: 13px;
+    overflow: auto;
+    border: 1px solid rgba(139, 205, 255, 0.14);
+    border-radius: 8px;
+    background: rgba(0, 6, 18, 0.74);
+    color: #d8ecff;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+}
+
+.lineforge-data-summary,
+.lineforge-data-module-grid,
+.lineforge-inference-board,
+.lineforge-system-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.lineforge-data-summary {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.lineforge-data-module-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin-top: 14px;
+}
+
+.lineforge-inference-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.78fr) minmax(0, 1.22fr);
+    gap: 14px;
+}
+
+.lineforge-inference-board {
+    grid-template-columns: 1fr;
+}
+
+.lineforge-system-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lineforge-data-summary > div,
+.lineforge-data-module-grid > div,
+.lineforge-inference-board article,
+.lineforge-system-grid > div {
+    position: relative;
+    min-width: 0;
+    min-height: 118px;
+    padding: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(139, 205, 255, 0.14);
+    border-radius: 8px;
+    background:
+        radial-gradient(circle at 18% 0%, rgba(83, 181, 255, 0.14), transparent 36%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.062), rgba(255, 255, 255, 0.018)),
+        rgba(4, 14, 32, 0.72);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.055),
+        0 18px 48px rgba(0, 0, 0, 0.16);
+}
+
+.lineforge-data-summary > div::after,
+.lineforge-data-module-grid > div::after,
+.lineforge-inference-board article::after,
+.lineforge-system-grid > div::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(118deg, transparent 0 58%, rgba(255, 255, 255, 0.055) 62%, transparent 72%);
+    opacity: 0.42;
+}
+
+.lineforge-data-summary span,
+.lineforge-data-module-grid span,
+.lineforge-inference-board span,
+.lineforge-system-grid span {
+    display: block;
+    color: var(--betedge-soft);
+    font-size: 0.69rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.lineforge-data-summary strong,
+.lineforge-data-module-grid strong,
+.lineforge-inference-board strong,
+.lineforge-system-grid strong {
+    display: block;
+    margin-top: 8px;
+    color: #fff;
+    overflow-wrap: anywhere;
+}
+
+.lineforge-data-summary strong {
+    font-size: clamp(1.05rem, 1.45vw, 1.55rem);
+}
+
+.lineforge-data-module-grid strong,
+.lineforge-inference-board strong,
+.lineforge-system-grid strong {
+    font-size: 0.98rem;
+    line-height: 1.3;
+}
+
+.lineforge-data-summary small,
+.lineforge-data-module-grid small,
+.lineforge-inference-board small,
+.lineforge-system-grid small {
+    display: block;
+    margin-top: 7px;
+    color: var(--betedge-muted);
+    line-height: 1.45;
+}
+
+.lineforge-data-module-grid code,
+.lineforge-system-grid em {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    margin-top: 10px;
+    padding: 4px 8px;
+    border: 1px solid rgba(139, 205, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(85, 176, 255, 0.08);
+    color: #cfeeff;
+    font: 800 0.68rem/1 var(--aegis-mono, ui-monospace, SFMono-Regular, Consolas, monospace);
+    text-transform: uppercase;
+}
+
+.lineforge-inference-board article {
+    min-height: 156px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: 10px;
+}
+
+.lineforge-inference-board article > div {
+    grid-row: span 2;
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(119, 203, 255, 0.22);
+    border-radius: 8px;
+    background: rgba(66, 157, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.lineforge-inference-board .lineforge-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.lineforge-inference-board strong,
+.lineforge-inference-board small {
+    grid-column: 2 / -1;
+}
+
+.lineforge-inference-board b {
+    color: #9ee6ff;
+    font-size: 0.84rem;
+    text-align: right;
+}
+
+.lineforge-data-summary .is-public-free,
+.lineforge-data-summary .is-transparent-learning-layer,
+.lineforge-data-summary .is-operational-watch,
+.lineforge-data-summary .is-multi-dimensional,
+.lineforge-data-summary .is-extracting-features,
+.lineforge-data-summary .is-independent-layer,
+.lineforge-data-summary .is-self-evaluating,
+.lineforge-data-summary .is-explainable-watch,
+.lineforge-data-summary .is-domain-agnostic-foundation,
+.lineforge-data-summary .is-active-domain,
+.lineforge-data-summary .is-defined,
+.lineforge-data-summary .is-governance-first,
+.lineforge-data-module-grid .is-public-free,
+.lineforge-data-module-grid .is-ready-for-training,
+.lineforge-data-module-grid .is-observed,
+.lineforge-data-module-grid .is-calibrating,
+.lineforge-data-module-grid .is-pattern-ready,
+.lineforge-data-module-grid .is-active-domain,
+.lineforge-data-module-grid .is-foundation-ready,
+.lineforge-system-grid .is-active,
+.lineforge-system-grid .is-operational-watch,
+.lineforge-system-grid .is-multi-dimensional,
+.lineforge-system-grid .is-ready-for-training,
+.lineforge-system-grid .is-observed,
+.lineforge-system-grid .is-armed,
+.lineforge-system-grid .is-ready,
+.lineforge-system-grid .is-normal,
+.lineforge-system-grid .is-quiet,
+.lineforge-system-grid .is-candidate-ready,
+.lineforge-system-grid .is-sequence-ready,
+.lineforge-system-grid .is-capturing,
+.lineforge-system-grid .is-primary-active,
+.lineforge-system-grid .is-defined,
+.lineforge-system-grid .is-governed,
+.lineforge-system-grid .is-governance-first,
+.lineforge-system-grid .is-memory-active,
+.lineforge-system-grid .is-baseline-ready,
+.lineforge-system-grid .is-context-aware,
+.lineforge-system-grid .is-foundation-ready,
+.lineforge-inference-board .is-stable {
+    border-color: rgba(91, 188, 255, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 30px rgba(68, 165, 255, 0.075);
+}
+
+.lineforge-data-module-grid .is-partial,
+.lineforge-data-summary .is-fallback,
+.lineforge-data-summary .is-jsonl-fallback,
+.lineforge-data-summary .is-collecting-baseline,
+.lineforge-data-summary .is-collecting-labels,
+.lineforge-data-summary .is-public-context-only,
+.lineforge-data-summary .is-collecting-memory,
+.lineforge-data-summary .is-degraded-public-mode,
+.lineforge-data-summary .is-high-uncertainty,
+.lineforge-data-summary .is-degraded-watch,
+.lineforge-data-summary .is-adapter-blueprint,
+.lineforge-data-summary .is-memory-warming,
+.lineforge-system-grid .is-building,
+.lineforge-system-grid .is-jsonl-fallback,
+.lineforge-system-grid .is-collecting-baseline,
+.lineforge-system-grid .is-waiting-for-odds-rows,
+.lineforge-system-grid .is-needs-snapshot-history,
+.lineforge-system-grid .is-needs-history,
+.lineforge-system-grid .is-data-gated,
+.lineforge-system-grid .is-collecting-labels,
+.lineforge-system-grid .is-public-context-only,
+.lineforge-system-grid .is-evidence-gated,
+.lineforge-system-grid .is-collecting-memory,
+.lineforge-system-grid .is-data-sparse,
+.lineforge-system-grid .is-thin-observed,
+.lineforge-system-grid .is-manual-review,
+.lineforge-system-grid .is-ready-empty,
+.lineforge-system-grid .is-no-statistical-model,
+.lineforge-system-grid .is-fallback-active,
+.lineforge-system-grid .is-needs-scheduler,
+.lineforge-system-grid .is-collecting,
+.lineforge-system-grid .is-planned,
+.lineforge-system-grid .is-adapter-blueprint,
+.lineforge-system-grid .is-planned-domain,
+.lineforge-system-grid .is-memory-warming,
+.lineforge-system-grid .is-optimization-watch,
+.lineforge-system-grid .is-institutional-blueprint,
+.lineforge-system-grid .is-thin,
+.lineforge-system-grid .is-waiting,
+.lineforge-inference-board .is-watch,
+.lineforge-inference-board .is-fallback {
+    border-color: rgba(255, 194, 87, 0.22);
+}
+
+.lineforge-system-grid .is-high,
+.lineforge-system-grid .is-degraded-watch,
+.lineforge-system-grid .is-stale-data-risk,
+.lineforge-system-grid .is-high-volatility,
+.lineforge-system-grid .is-degraded,
+.lineforge-system-grid .is-elevated,
+.lineforge-system-grid .is-active-pressure,
+.lineforge-system-grid .is-triggered-watch,
+.lineforge-system-grid .is-watch {
+    border-color: rgba(255, 92, 120, 0.24);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055), 0 0 30px rgba(255, 92, 120, 0.06);
+}
+
+.lineforge-data-module-grid .is-premium {
+    border-color: rgba(98, 205, 255, 0.32);
+    background:
+        radial-gradient(circle at 16% 0%, rgba(98, 205, 255, 0.18), transparent 38%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
+        rgba(5, 18, 42, 0.75);
+}
+
+.lineforge-data-module-grid .is-disabled,
+.lineforge-system-grid .is-error {
+    border-color: rgba(255, 92, 120, 0.24);
+}
+
+@media (max-width: 1180px) {
+    .lineforge-arb-command,
+    .lineforge-arb-layout,
+    .lineforge-arb-drawer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lineforge-arb-summary,
+    .lineforge-arb-provider-grid,
+    .lineforge-data-summary,
+    .lineforge-data-module-grid,
+    .lineforge-inference-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .lineforge-inference-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .lineforge-arb-summary,
+    .lineforge-arb-provider-grid,
+    .lineforge-data-summary,
+    .lineforge-data-module-grid,
+    .lineforge-system-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lineforge-arb-drawer {
+        padding: 0;
+    }
+
+    .lineforge-arb-drawer-panel {
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .lineforge-arb-drawer-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sports-reference-page.betedge-page::before,
+    .betedge-shell::after,
+    .lineforge-float-panel,
+    .lineforge-mini-bars i,
+    .betedge-statusbar span {
+        animation: none;
+    }
+
+    .betedge-card:hover,
+    .betedge-event-card:hover,
+    .betedge-pick-row:hover,
+    .betedge-decision-row:hover {
+        transform: none;
+    }
+}
+
+.lineforge-workspace-bar {
+    position: sticky;
+    top: 0;
+    z-index: 24;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    padding: 10px;
+    border: 1px solid rgba(188, 225, 255, 0.13);
+    border-radius: 10px;
+    background:
+        linear-gradient(135deg, rgba(99, 199, 255, 0.1), rgba(255, 255, 255, 0.025)),
+        rgba(3, 10, 22, 0.78);
+    box-shadow:
+        0 18px 60px rgba(0, 7, 20, 0.28),
+        inset 0 1px rgba(255, 255, 255, 0.075);
+    backdrop-filter: blur(24px) saturate(1.18);
+}
+
+.lineforge-workspace-bar::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+        linear-gradient(90deg, transparent, rgba(99, 199, 255, 0.12), transparent),
+        linear-gradient(rgba(99, 199, 255, 0.055) 1px, transparent 1px);
+    background-size: 100% 100%, 36px 36px;
+    opacity: 0.38;
+}
+
+.lineforge-workspace-group {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 4px;
+    border: 1px solid rgba(188, 225, 255, 0.1);
+    border-radius: 9px;
+    background: rgba(0, 9, 22, 0.42);
+}
+
+.lineforge-workspace-group > span {
+    padding: 0 8px;
+    color: rgba(222, 237, 255, 0.54);
+    font-size: 0.67rem;
+    font-weight: 900;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.lineforge-workspace-group button {
+    min-height: 30px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    padding: 0 10px;
+    background: transparent;
+    color: rgba(232, 244, 255, 0.72);
+    font-size: 0.78rem;
+    font-weight: 850;
+    cursor: pointer;
+    transition: background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+.lineforge-workspace-group button:hover,
+.lineforge-workspace-group button.is-active {
+    border-color: rgba(99, 199, 255, 0.28);
+    background: rgba(99, 199, 255, 0.12);
+    color: #ffffff;
+    box-shadow: 0 0 22px rgba(99, 199, 255, 0.12);
+}
+
+.lineforge-workspace-actions {
+    margin-left: auto;
+}
+
+.lineforge-workspace-card {
+    transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        padding 180ms ease,
+        opacity 180ms ease;
+}
+
+.lineforge-workspace-card.is-pinned {
+    border-color: rgba(169, 243, 255, 0.34);
+    box-shadow:
+        0 24px 90px rgba(0, 11, 32, 0.42),
+        0 0 36px rgba(99, 199, 255, 0.14),
+        inset 0 1px rgba(255, 255, 255, 0.11);
+}
+
+.lineforge-workspace-card.is-pinned::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 18px;
+    width: 42px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, var(--lf-cyan), transparent);
+    box-shadow: 0 0 18px rgba(169, 243, 255, 0.6);
+}
+
+.betedge-card-head .lineforge-panel-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+
+.betedge-card-head .lineforge-panel-controls button {
+    min-height: 27px;
+    border: 1px solid rgba(188, 225, 255, 0.12);
+    border-radius: 7px;
+    padding: 0 8px;
+    background: rgba(5, 14, 27, 0.58);
+    color: rgba(232, 244, 255, 0.66);
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    box-shadow: none;
+}
+
+.betedge-card-head .lineforge-panel-controls button:hover,
+.betedge-card-head .lineforge-panel-controls button.is-active {
+    border-color: rgba(99, 199, 255, 0.36);
+    background: rgba(99, 199, 255, 0.12);
+    color: #ffffff;
+}
+
+.lineforge-workspace-card.is-collapsed {
+    min-height: 0;
+    padding-bottom: 12px;
+    opacity: 0.82;
+}
+
+.lineforge-workspace-card.is-collapsed > :not(.betedge-card-head) {
+    display: none !important;
+}
+
+.lineforge-workspace-card.is-collapsed > .betedge-card-head {
+    margin-bottom: 0;
+}
+
+.lineforge-workspace-card.is-collapsed::before {
+    opacity: 0.22;
+}
+
+.lineforge-workspace-dock {
+    position: fixed;
+    right: 20px;
+    bottom: 18px;
+    left: 286px;
+    z-index: 42;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.lineforge-workspace-dock:empty {
+    display: none;
+}
+
+.lineforge-workspace-dock button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: min(320px, 42vw);
+    min-height: 38px;
+    border: 1px solid rgba(188, 225, 255, 0.16);
+    border-radius: 999px;
+    padding: 0 12px;
+    background:
+        linear-gradient(135deg, rgba(99, 199, 255, 0.14), rgba(255, 255, 255, 0.035)),
+        rgba(2, 8, 17, 0.86);
+    color: #ffffff;
+    box-shadow: 0 18px 48px rgba(0, 7, 20, 0.38), inset 0 1px rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(22px);
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.lineforge-workspace-dock span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    font-weight: 850;
+}
+
+.lineforge-workspace-dock b {
+    color: var(--lf-cyan);
+    font-size: 0.67rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.betedge-shell[data-workspace-current-density="compact"] .betedge-main {
+    padding: 12px 14px 58px;
+}
+
+.betedge-shell[data-workspace-current-density="compact"] .betedge-panel,
+.betedge-shell[data-workspace-current-density="compact"] .betedge-lower-grid,
+.betedge-shell[data-workspace-current-density="compact"] .lineforge-execution-grid,
+.betedge-shell[data-workspace-current-density="compact"] .lineforge-arb-layout {
+    gap: 10px;
+}
+
+.betedge-shell[data-workspace-current-density="compact"] .betedge-card {
+    padding: 12px;
+}
+
+.betedge-shell[data-workspace-current-density="compact"] .lineforge-hero {
+    min-height: 390px;
+    padding: 16px;
+}
+
+.betedge-shell[data-workspace-current-density="compact"] .betedge-decision-main h1 {
+    font-size: clamp(2.7rem, 5vw, 3.75rem);
+}
+
+.betedge-shell[data-workspace-current-density="compact"] .betedge-event-card,
+.betedge-shell[data-workspace-current-density="compact"] .betedge-decision-row,
+.betedge-shell[data-workspace-current-density="compact"] .betedge-pick-row {
+    min-height: auto;
+}
+
+.betedge-shell[data-workspace-current-density="expanded"] .betedge-main {
+    padding: 20px 24px 86px;
+}
+
+.betedge-shell[data-workspace-current-density="expanded"] .betedge-panel,
+.betedge-shell[data-workspace-current-density="expanded"] .betedge-lower-grid,
+.betedge-shell[data-workspace-current-density="expanded"] .lineforge-execution-grid,
+.betedge-shell[data-workspace-current-density="expanded"] .lineforge-arb-layout {
+    gap: 22px;
+}
+
+.betedge-shell[data-workspace-current-density="expanded"] .betedge-card {
+    padding: 22px;
+}
+
+.betedge-shell[data-workspace-current-density="expanded"] .lineforge-hero {
+    min-height: 620px;
+}
+
+.betedge-shell[data-workspace-current-mode="command"] .lineforge-hero {
+    min-height: 380px;
+    grid-template-columns: minmax(0, 1.22fr) minmax(260px, 0.54fr);
+}
+
+.betedge-shell[data-workspace-current-mode="command"] .lineforge-hero-visual {
+    align-self: end;
+    min-height: 174px;
+}
+
+.betedge-shell[data-workspace-current-mode="command"] .lineforge-float-panel {
+    min-height: 82px;
+    padding: 12px;
+}
+
+.betedge-shell[data-workspace-current-mode="command"] .lineforge-primary-signal {
+    min-height: 178px;
+}
+
+.betedge-shell[data-workspace-current-mode="command"] [data-sports-panel="dashboard"].is-active {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+    grid-auto-flow: dense;
+    align-items: start;
+    gap: 14px;
+}
+
+.betedge-shell[data-workspace-current-mode="command"] .betedge-decision-board-card,
+.betedge-shell[data-workspace-current-mode="command"] .betedge-lower-grid {
+    grid-column: 1 / -1;
+}
+
+.betedge-shell[data-workspace-current-mode="command"] .betedge-decision-board,
+.betedge-shell[data-workspace-current-mode="command"] .betedge-events-row,
+.betedge-shell[data-workspace-current-mode="command"] .betedge-picks-table,
+.betedge-shell[data-workspace-current-mode="signals"] .betedge-picks-table,
+.betedge-shell[data-workspace-current-mode="analyst"] .lineforge-data-module-grid,
+.betedge-shell[data-workspace-current-mode="analyst"] .lineforge-system-grid,
+.betedge-shell[data-workspace-current-mode="markets"] .lineforge-arb-table,
+.betedge-shell[data-workspace-current-mode="markets"] .lineforge-audit-log,
+.betedge-shell[data-workspace-current-mode="markets"] .lineforge-rule-list,
+.betedge-shell[data-workspace-current-mode="execution"] .lineforge-audit-log,
+.betedge-shell[data-workspace-current-mode="execution"] .lineforge-rule-list {
+    max-height: min(44vh, 420px);
+    overflow: auto;
+    padding-right: 4px;
+}
+
+.betedge-shell[data-workspace-current-mode="command"] .betedge-events-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.betedge-shell[data-workspace-current-mode="command"] .betedge-lower-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.betedge-shell[data-workspace-current-mode="live"] [data-sports-panel="live"].is-active .betedge-card,
+.betedge-shell[data-workspace-current-mode="monitoring"] [data-sports-panel="live"].is-active .betedge-card,
+.betedge-shell[data-workspace-current-mode="signals"] [data-sports-panel="picks"].is-active .betedge-card,
+.betedge-shell[data-workspace-current-mode="analyst"] [data-sports-panel="analytics"].is-active .betedge-analytics-grid,
+.betedge-shell[data-workspace-current-mode="markets"] [data-sports-panel="arbitrage"].is-active .lineforge-arb-layout,
+.betedge-shell[data-workspace-current-mode="markets"] [data-sports-panel="execution"].is-active .lineforge-execution-grid,
+.betedge-shell[data-workspace-current-mode="execution"] [data-sports-panel="execution"].is-active .lineforge-execution-grid {
+    min-height: min(760px, calc(100vh - 240px));
+}
+
+.betedge-shell[data-workspace-current-mode="live"] .betedge-expanded-events,
+.betedge-shell[data-workspace-current-mode="monitoring"] .betedge-expanded-events {
+    max-height: calc(100vh - 300px);
+    overflow: auto;
+    padding-right: 4px;
+}
+
+.betedge-shell[data-workspace-current-mode="signals"] .betedge-card:not(.is-workspace-primary):not(.is-pinned),
+.betedge-shell[data-workspace-current-mode="live"] .betedge-card:not(.is-workspace-primary):not(.is-pinned),
+.betedge-shell[data-workspace-current-mode="monitoring"] .betedge-card:not(.is-workspace-primary):not(.is-pinned),
+.betedge-shell[data-workspace-current-mode="analyst"] .betedge-card:not(.is-workspace-primary):not(.is-pinned),
+.betedge-shell[data-workspace-current-mode="markets"] .betedge-card:not(.is-workspace-primary):not(.is-pinned),
+.betedge-shell[data-workspace-current-mode="execution"] .betedge-card:not(.is-workspace-primary):not(.is-pinned) {
+    border-color: rgba(188, 225, 255, 0.1);
+}
+
+.betedge-shell[data-workspace-current-mode="signals"] .betedge-picks-card,
+.betedge-shell[data-workspace-current-mode="live"] .betedge-live-card,
+.betedge-shell[data-workspace-current-mode="monitoring"] .betedge-live-card,
+.betedge-shell[data-workspace-current-mode="analyst"] [data-sports-panel="analytics"].is-active .lineforge-wide-card:first-child,
+.betedge-shell[data-workspace-current-mode="markets"] .lineforge-arb-command,
+.betedge-shell[data-workspace-current-mode="markets"] .lineforge-execution-command,
+.betedge-shell[data-workspace-current-mode="execution"] .lineforge-execution-command {
+    border-color: rgba(169, 243, 255, 0.36);
+    box-shadow:
+        0 26px 96px rgba(0, 11, 32, 0.46),
+        0 0 44px rgba(99, 199, 255, 0.13),
+        inset 0 1px rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 1260px) {
+    .betedge-shell[data-workspace-current-mode="command"] [data-sports-panel="dashboard"].is-active,
+    .betedge-shell[data-workspace-current-mode="command"] .betedge-lower-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .betedge-shell[data-workspace-current-mode="command"] .betedge-events-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 980px) {
+    .lineforge-workspace-bar {
+        position: relative;
+    }
+
+    .lineforge-workspace-group,
+    .lineforge-workspace-actions {
+        width: 100%;
+        margin-left: 0;
+        overflow-x: auto;
+    }
+
+    .lineforge-workspace-dock {
+        left: 12px;
+        right: 12px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 720px) {
+    .betedge-shell[data-workspace-current-mode="command"] .lineforge-hero,
+    .betedge-shell[data-workspace-current-mode="command"] [data-sports-panel="dashboard"].is-active,
+    .betedge-shell[data-workspace-current-mode="command"] .betedge-events-row,
+    .betedge-shell[data-workspace-current-mode="command"] .betedge-lower-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .betedge-card-head {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+}

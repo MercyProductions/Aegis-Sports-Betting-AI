@@ -878,6 +878,7 @@ namespace
         View active_view_ = View::Dashboard;
         std::string active_filter_ = "all";
         std::string provider_filter_ = "all";
+        int dashboard_priority_tab_ = 0;
         int report_sport_filter_ = 0;
         int report_date_filter_ = 0;
         int report_provider_filter_ = 0;
@@ -1030,7 +1031,7 @@ namespace
             TextMuted(AppVersionLabel().c_str());
 
             const float card_w = 520.0f;
-            const float card_h = 500.0f;
+            const float card_h = 552.0f;
             const ImVec2 card_pos((size.x - card_w) * 0.5f, (size.y - card_h) * 0.5f);
             ImGui::SetCursorPos(card_pos);
             ImGui::BeginChild("login_card", ImVec2(card_w, card_h), true, ImGuiWindowFlags_NoScrollbar);
@@ -1048,6 +1049,9 @@ namespace
             if (AegisButton("SIGN IN", ImVec2(-1, 48), true) || (ImGui::IsKeyPressed(ImGuiKey_Enter) && ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)))
                 AttemptLogin(true);
             ImGui::Spacing();
+            if (AegisButton("SKIP LOGIN", ImVec2(-1, 42), false))
+                ContinueWithoutLogin();
+            ImGui::Spacing();
             if (AegisButton("Open Website", ImVec2(-1, 42), false))
                 aegis::OpenExternalUrl(aegis::JoinUrl(config_.auth_base_url, config_.website_path));
             if (!status_.empty())
@@ -1062,7 +1066,7 @@ namespace
             }
             ImGui::EndChild();
 
-            ImGui::SetCursorPos(ImVec2(50, size.y - 74));
+            ImGui::SetCursorPos(ImVec2(50, size.y - 42));
             TextMuted("(c) 2026 Aegis Automation Suite");
         }
 
@@ -2096,29 +2100,13 @@ namespace
             ImGui::TextUnformatted("Native Market Command");
             ImGui::PopFont();
             ImGui::SetCursorScreenPos(ImVec2(pos.x + 24.0f, pos.y + 78.0f));
-            const float text_max = width < 980.0f ? pos.x + width - 28.0f : pos.x + width * 0.40f;
+            const float text_max = width < 1220.0f ? pos.x + width - 28.0f : pos.x + width * 0.40f;
             ImGui::PushTextWrapPos(text_max);
             ImGui::PushStyleColor(ImGuiCol_Text, V4(0.62f, 0.67f, 0.64f, 1.0f));
             ImGui::TextWrapped("%s", state_.source_label.c_str());
             ImGui::PopStyleColor();
             ImGui::PopTextWrapPos();
 
-            const bool compact = width < 980.0f;
-            if (compact)
-            {
-                ImGui::Dummy(ImVec2(1, 124.0f));
-                ImGui::EndChild();
-                return;
-            }
-
-            const float tile_y = pos.y + 24.0f;
-            const float tile_x = pos.x + width * 0.43f;
-            const float tile_w = std::max(116.0f, (pos.x + width - tile_x - 38.0f) / 4.0f);
-            const ImVec2 tile_size(tile_w, 98.0f);
-            DrawHeroMetric(draw, ImVec2(tile_x, tile_y), tile_size, "Live", CountStatus("live"), "in progress", IconKind::Live, Col(0.30f, 0.95f, 0.48f, 0.95f));
-            DrawHeroMetric(draw, ImVec2(tile_x + (tile_w + 10.0f), tile_y), tile_size, "Upcoming", CountStatus("scheduled"), "in window", IconKind::Calendar, Col(0.55f, 0.82f, 1.0f, 0.95f));
-            DrawHeroMetric(draw, ImVec2(tile_x + (tile_w + 10.0f) * 2.0f, tile_y), tile_size, "Markets", std::to_string(CountMarketGames()), "with lines", IconKind::Chart, Col(0.94f, 0.66f, 0.23f, 0.95f));
-            DrawHeroMetric(draw, ImVec2(tile_x + (tile_w + 10.0f) * 3.0f, tile_y), tile_size, "Trust", std::to_string(DataTrustScore()) + "%", DataTrustLabel().c_str(), IconKind::Shield, Col(0.53f, 0.42f, 1.0f, 0.95f));
             ImGui::Dummy(ImVec2(1, 124.0f));
             ImGui::EndChild();
         }
@@ -2165,9 +2153,147 @@ namespace
             ImGui::EndChild();
         }
 
+        void RenderDashboardMetric(const char* label, const std::string& value, const std::string& detail, IconKind icon, ImVec2 size)
+        {
+            ImDrawList* draw = ImGui::GetWindowDrawList();
+            const ImVec2 pos = ImGui::GetCursorScreenPos();
+            const ImVec2 end(pos.x + size.x, pos.y + size.y);
+            draw->AddRectFilled(pos, end, Col(0.025f, 0.046f, 0.041f, 0.96f), 8.0f);
+            draw->AddRect(pos, end, Col(0.77f, 0.87f, 0.81f, 0.11f), 8.0f);
+            DrawIconBadge(draw, ImVec2(pos.x + 13.0f, pos.y + 12.0f), ImVec2(30.0f, 30.0f), icon, true);
+            draw->AddText(g_font_regular, 13.0f, ImVec2(pos.x + 54.0f, pos.y + 8.0f), Col(0.62f, 0.67f, 0.64f, 1.0f), label);
+            draw->AddText(g_font_bold, 18.0f, ImVec2(pos.x + 54.0f, pos.y + 27.0f), Col(0.94f, 0.98f, 0.95f, 1.0f), value.c_str());
+            draw->AddText(g_font_regular, 12.0f, ImVec2(pos.x + 14.0f, pos.y + size.y - 18.0f), Col(0.52f, 0.60f, 0.57f, 1.0f), detail.c_str());
+            ImGui::Dummy(size);
+        }
+
+        void RenderDashboardPulse(float width)
+        {
+            (void)width;
+            const int columns = 2;
+            const float height = 142.0f;
+            ImGui::BeginChild("dashboard_pulse", ImVec2(0, height), true, ImGuiWindowFlags_NoScrollbar);
+
+            struct PulseMetric
+            {
+                const char* label;
+                std::string value;
+                std::string detail;
+                IconKind icon;
+            };
+
+            const std::vector<PulseMetric> metrics = {
+                {"Board", std::to_string(static_cast<int>(state_.games.size())), std::to_string(CountStatusValue("live")) + " live / " + std::to_string(CountStatusValue("scheduled")) + " upcoming", IconKind::Live},
+                {"Trust", std::to_string(DataTrustScore()) + "%", DataTrustLabel() + " / " + AgeLabel(SecondsSinceLastRefresh()), IconKind::Shield},
+                {"Picks", std::to_string(static_cast<int>(VisiblePredictionIndexes().size())), std::to_string(confidence_filter_) + "% floor after filters", IconKind::Brain},
+                {"Markets", std::to_string(CountMarketGames()), std::to_string(CountAvailableBookLines()) + " book / " + std::to_string(CountAvailableExchangeLinks()) + " exchange", IconKind::Chart}
+            };
+
+            const float available = ImGui::GetContentRegionAvail().x;
+            const float cell_w = (available - static_cast<float>(columns - 1) * 10.0f) / static_cast<float>(columns);
+            for (int i = 0; i < static_cast<int>(metrics.size()); ++i)
+            {
+                if (i % columns != 0)
+                    ImGui::SameLine(0.0f, 10.0f);
+                const PulseMetric& metric = metrics[static_cast<size_t>(i)];
+                RenderDashboardMetric(metric.label, metric.value, metric.detail, metric.icon, ImVec2(cell_w, 54.0f));
+            }
+
+            ImGui::EndChild();
+        }
+
+        void RenderDashboardPriorityPanel(const std::vector<const aegis::Game*>& featured, bool has_live, float width, float height)
+        {
+            ImGui::BeginChild("dashboard_priority_panel", ImVec2(width <= 0.0f ? 0.0f : width, height), true);
+            CardHeader("Priority Board", has_live ? "Live now" : "Next best events", View::Live);
+            if (AegisIconButton("Events", IconKind::Live, ImVec2(112.0f, 38.0f), dashboard_priority_tab_ == 0))
+                dashboard_priority_tab_ = 0;
+            ImGui::SameLine();
+            if (AegisIconButton("Picks", IconKind::Brain, ImVec2(104.0f, 38.0f), dashboard_priority_tab_ == 1))
+                dashboard_priority_tab_ = 1;
+            ImGui::SameLine();
+            if (AegisIconButton("Markets", IconKind::Chart, ImVec2(122.0f, 38.0f), dashboard_priority_tab_ == 2))
+                dashboard_priority_tab_ = 2;
+            ImGui::Spacing();
+
+            if (dashboard_priority_tab_ == 0)
+            {
+                const int count = std::min(3, static_cast<int>(featured.size()));
+                const float available = ImGui::GetContentRegionAvail().x;
+                const float card_w = count > 0 ? std::max(210.0f, (available - 24.0f) / static_cast<float>(count)) : available;
+                for (int i = 0; i < count; ++i)
+                {
+                    if (i > 0)
+                        ImGui::SameLine();
+                    RenderEventCard(*featured[static_cast<size_t>(i)], ImVec2(card_w, 204.0f));
+                }
+                if (count == 0)
+                    EmptyState("No events match this filter", "Clear the search or choose All Sports to rebuild the board.");
+            }
+            else if (dashboard_priority_tab_ == 1)
+            {
+                RenderPredictionTable(5, true);
+            }
+            else
+            {
+                RenderInfoList(ProviderHealthRows(), 5);
+            }
+            ImGui::EndChild();
+        }
+
+        void RenderDashboardBriefPanel(float width, float height)
+        {
+            ImGui::BeginChild("dashboard_brief_panel", ImVec2(width <= 0.0f ? 0.0f : width, height), true);
+            CardHeader("Command Brief", DataTrustLabel().c_str(), active_view_);
+
+            const std::vector<aegis::InfoItem> rows = CommandBriefRows();
+            for (const aegis::InfoItem& row : rows)
+                RenderInfoChip(row, ImVec2(-1.0f, 88.0f));
+
+            ImGui::SeparatorText("Signals");
+            if (state_.alerts.empty())
+                RenderInfoList(NotificationRows(), 2);
+            else
+                RenderInfoList(state_.alerts, 3);
+            ImGui::EndChild();
+        }
+
+        void RenderDashboardDetailSection(float width)
+        {
+            ImGui::SetNextItemOpen(false, ImGuiCond_Once);
+            if (!ImGui::CollapsingHeader("Market & Model Detail", ImGuiTreeNodeFlags_SpanAvailWidth))
+                return;
+
+            const bool compact = width < 1060.0f;
+            const float card_w = compact ? 0.0f : (width - 48.0f) / 3.0f;
+
+            ImGui::BeginChild("insight_card", ImVec2(card_w, 260.0f), true);
+            CardHeader("AI Insight", "", View::Dashboard);
+            ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + (compact ? ImGui::GetContentRegionAvail().x : card_w) - 28.0f);
+            ImGui::TextUnformatted(state_.insight_copy.c_str());
+            ImGui::PopTextWrapPos();
+            DrawSparkChart(PrimaryHistory(), ImVec2((compact ? ImGui::GetContentRegionAvail().x : card_w) - 28.0f, 132.0f), Col(0.25f, 0.88f, 0.48f), "Win Confidence", LastPointLabel(PrimaryHistory()).c_str());
+            ImGui::EndChild();
+
+            if (!compact)
+                ImGui::SameLine();
+            ImGui::BeginChild("market_card", ImVec2(card_w, 260.0f), true);
+            CardHeader("Market Movement", state_.selected_market.c_str(), View::Analytics);
+            ImGui::TextUnformatted(state_.primary_market.c_str());
+            DrawSparkChart(state_.market_history, ImVec2((compact ? ImGui::GetContentRegionAvail().x : card_w) - 28.0f, 146.0f), Col(0.55f, 0.88f, 1.0f), "Line Movement", state_.book_current.c_str());
+            ImGui::EndChild();
+
+            if (!compact)
+                ImGui::SameLine();
+            ImGui::BeginChild("alerts_card", ImVec2(card_w, 260.0f), true);
+            CardHeader("Alerts", "Signal feed", View::Analytics);
+            RenderInfoList(state_.alerts, 4);
+            ImGui::EndChild();
+        }
+
         void RenderMain(float width)
         {
-            if (active_view_ != View::Setup && active_view_ != View::Health && active_view_ != View::Settings && active_view_ != View::Details && active_view_ != View::Alerts && active_view_ != View::Props && active_view_ != View::Scenario && active_view_ != View::Exposure && active_view_ != View::Reports)
+            if (active_view_ != View::Dashboard && active_view_ != View::Setup && active_view_ != View::Health && active_view_ != View::Settings && active_view_ != View::Details && active_view_ != View::Alerts && active_view_ != View::Props && active_view_ != View::Scenario && active_view_ != View::Exposure && active_view_ != View::Reports)
                 RenderFilters(width);
             switch (active_view_)
             {
@@ -2208,10 +2334,12 @@ namespace
                 if (active_filter_ == combo_values[i])
                     current = i;
             }
+            ImGui::BeginGroup();
             ImGui::TextColored(V4(0.62f, 0.67f, 0.64f, 1.0f), "Sport");
             ImGui::SetNextItemWidth(std::min(260.0f, width * 0.28f));
             if (ImGui::Combo("##sport_combo", &current, combo_labels, IM_ARRAYSIZE(combo_labels)))
                 active_filter_ = combo_values[current];
+            ImGui::EndGroup();
             ImGui::SameLine();
             ImGui::BeginGroup();
             ImGui::TextColored(V4(0.62f, 0.67f, 0.64f, 1.0f), "Search");
@@ -2278,13 +2406,108 @@ namespace
             ImGui::Spacing();
         }
 
+        void RenderDashboardControlStrip(float width)
+        {
+            ImGui::BeginChild("dashboard_control_strip", ImVec2(0, width < 940.0f ? 138.0f : 86.0f), true, ImGuiWindowFlags_NoScrollbar);
+
+            const char* combo_labels[] = {
+                "All Sports", "Live Now", "Upcoming", "NBA", "WNBA", "NCAAB", "NCAAW", "NFL", "College Football", "UFL",
+                "MLB", "NCAA Baseball", "NCAA Softball", "NHL", "NCAA Hockey", "Soccer", "MLS", "Combat Sports", "Tennis",
+                "Golf", "Racing", "Cricket", "Rugby", "Lacrosse", "Volleyball", "Esports"
+            };
+            const char* combo_values[] = {
+                "all", "live", "scheduled", "league:nba", "league:wnba", "league:ncaab", "league:ncaaw", "league:nfl", "league:ncaaf", "league:ufl",
+                "league:mlb", "league:college-baseball", "league:college-softball", "league:nhl", "league:ncaa-hockey", "group:soccer", "league:mls", "group:combat", "group:tennis",
+                "group:golf", "group:racing", "group:cricket", "group:rugby", "group:lacrosse", "group:volleyball", "group:esports"
+            };
+            int current = 0;
+            for (int i = 0; i < IM_ARRAYSIZE(combo_values); ++i)
+            {
+                if (active_filter_ == combo_values[i])
+                    current = i;
+            }
+
+            const float available = ImGui::GetContentRegionAvail().x;
+            const bool compact = available < 900.0f;
+            const float sport_w = compact ? std::min(260.0f, available) : 236.0f;
+            const float confidence_w = compact ? 180.0f : 190.0f;
+            const float action_w = 118.0f;
+            const float search_w = compact ? available : std::max(260.0f, available - sport_w - confidence_w - action_w - 42.0f);
+
+            ImGui::BeginGroup();
+            ImGui::TextColored(V4(0.62f, 0.67f, 0.64f, 1.0f), "Sport");
+            ImGui::SetNextItemWidth(sport_w);
+            if (ImGui::Combo("##dashboard_sport_combo", &current, combo_labels, IM_ARRAYSIZE(combo_labels)))
+                active_filter_ = combo_values[current];
+            ImGui::EndGroup();
+
+            if (!compact)
+                ImGui::SameLine(0.0f, 14.0f);
+            else
+                ImGui::Spacing();
+
+            ImGui::BeginGroup();
+            ImGui::TextColored(V4(0.62f, 0.67f, 0.64f, 1.0f), "Search");
+            ImGui::SetNextItemWidth(search_w);
+            StyledInputText("##hidden", "##dashboard_search", search_, sizeof(search_));
+            ImGui::EndGroup();
+
+            if (!compact)
+                ImGui::SameLine(0.0f, 14.0f);
+            else
+                ImGui::SameLine(0.0f, 14.0f);
+
+            ImGui::BeginGroup();
+            ImGui::TextColored(V4(0.62f, 0.67f, 0.64f, 1.0f), "Confidence");
+            ImGui::SetNextItemWidth(confidence_w);
+            ImGui::SliderInt("##dashboard_confidence", &confidence_filter_, 50, 85, "%d%%");
+            ImGui::EndGroup();
+
+            if (!compact)
+            {
+                ImGui::SameLine(0.0f, 14.0f);
+                ImGui::BeginGroup();
+                ImGui::Dummy(ImVec2(1.0f, 20.0f));
+                if (AegisIconButton("Reset", IconKind::Filter, ImVec2(action_w, 38.0f), false))
+                {
+                    confidence_filter_ = 50;
+                    filter_watchlist_only_ = false;
+                    filter_favorites_only_ = false;
+                    filter_market_lines_only_ = false;
+                    filter_actionable_only_ = false;
+                    search_[0] = '\0';
+                    active_filter_ = "all";
+                }
+                ImGui::EndGroup();
+            }
+            else
+            {
+                ImGui::SameLine(0.0f, 14.0f);
+                ImGui::BeginGroup();
+                ImGui::Dummy(ImVec2(1.0f, 20.0f));
+                if (AegisIconButton("Reset", IconKind::Filter, ImVec2(action_w, 38.0f), false))
+                {
+                    confidence_filter_ = 50;
+                    filter_watchlist_only_ = false;
+                    filter_favorites_only_ = false;
+                    filter_market_lines_only_ = false;
+                    filter_actionable_only_ = false;
+                    search_[0] = '\0';
+                    active_filter_ = "all";
+                }
+                ImGui::EndGroup();
+            }
+
+            ImGui::EndChild();
+        }
+
         void RenderDashboard(float width)
         {
             RenderDashboardHero(width);
             ImGui::Spacing();
-            RenderTrustBar(width);
+            RenderDashboardControlStrip(width);
             ImGui::Spacing();
-            RenderCommandBrief(width);
+            RenderDashboardPulse(width);
             ImGui::Spacing();
 
             const std::vector<const aegis::Game*> filtered = VisibleGames();
@@ -2307,47 +2530,25 @@ namespace
             if (featured.empty())
                 featured = filtered;
 
-            ImGui::BeginChild("live_card", ImVec2(0, 272), true);
-            const std::string event_title = live.empty() ? "Next Best Events" : "Top Live Events";
-            CardHeader(event_title.c_str(), state_.source_badge.c_str(), View::Live);
-            const int count = std::min(4, static_cast<int>(featured.size()));
-            const float card_w = count > 0 ? std::max(180.0f, (width - 54.0f) / static_cast<float>(count)) : width - 36.0f;
-            for (int i = 0; i < count; ++i)
+            const float layout_width = ImGui::GetContentRegionAvail().x;
+            const bool split_layout = layout_width >= 1360.0f;
+            const float panel_h = split_layout ? 508.0f : 430.0f;
+            if (split_layout)
             {
-                if (i > 0)
-                    ImGui::SameLine();
-                RenderEventCard(*featured[static_cast<size_t>(i)], ImVec2(card_w, 198));
+                const float priority_w = std::floor((layout_width - 16.0f) * 0.66f);
+                RenderDashboardPriorityPanel(featured, !live.empty(), priority_w, panel_h);
+                ImGui::SameLine();
+                RenderDashboardBriefPanel(layout_width - priority_w - 16.0f, panel_h);
             }
-            if (count == 0)
-                EmptyState("No events match this filter", "Clear the search or choose All Sports to rebuild the board.");
-            ImGui::EndChild();
+            else
+            {
+                RenderDashboardPriorityPanel(featured, !live.empty(), 0.0f, panel_h);
+                ImGui::Spacing();
+                RenderDashboardBriefPanel(0.0f, 418.0f);
+            }
 
             ImGui::Spacing();
-            ImGui::BeginChild("picks_card", ImVec2(0, 286), true);
-            CardHeader("AI Top Picks", "Confidence, fair odds, edge, and EV", View::Picks);
-            RenderPredictionTable(5, true);
-            ImGui::EndChild();
-
-            ImGui::Spacing();
-            const float third = (width - 48.0f) / 3.0f;
-            ImGui::BeginChild("insight_card", ImVec2(third, 278), true);
-            CardHeader("AI Insight", "", View::Dashboard);
-            ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + third - 28.0f);
-            ImGui::TextUnformatted(state_.insight_copy.c_str());
-            ImGui::PopTextWrapPos();
-            DrawSparkChart(PrimaryHistory(), ImVec2(third - 28.0f, 150.0f), Col(0.25f, 0.88f, 0.48f), "Win Confidence", LastPointLabel(PrimaryHistory()).c_str());
-            ImGui::EndChild();
-            ImGui::SameLine();
-            ImGui::BeginChild("market_card", ImVec2(third, 278), true);
-            CardHeader("Market Movement", state_.selected_market.c_str(), View::Analytics);
-            ImGui::TextUnformatted(state_.primary_market.c_str());
-            DrawSparkChart(state_.market_history, ImVec2(third - 28.0f, 165.0f), Col(0.55f, 0.88f, 1.0f), "Line Movement", state_.book_current.c_str());
-            ImGui::EndChild();
-            ImGui::SameLine();
-            ImGui::BeginChild("alerts_card", ImVec2(third, 278), true);
-            CardHeader("Alerts", "Signal feed", View::Analytics);
-            RenderInfoList(state_.alerts, 3);
-            ImGui::EndChild();
+            RenderDashboardDetailSection(width);
         }
 
         std::vector<float> PrimaryHistory() const
@@ -7556,6 +7757,22 @@ namespace
                 }
             }
             active_view_ = View::Details;
+        }
+
+        void ContinueWithoutLogin()
+        {
+            auth_offline_ = false;
+            authenticated_ = true;
+            initial_sync_ = false;
+            cookie_header_.clear();
+            username_ = login_user_[0] != '\0' ? aegis::Trim(login_user_) : "Guest Preview";
+            state_ = aegis::MakeDemoSportsState();
+            last_refresh_ = std::chrono::steady_clock::now();
+            last_refresh_label_ = "Preview mode";
+            active_view_ = View::Dashboard;
+            setup_guided_once_ = true;
+            status_ = "Login skipped. Local preview mode is running with demo data.";
+            aegis::AppendDiagnosticLine("login skipped; local preview mode enabled");
         }
 
         void AttemptLogin(bool manual)

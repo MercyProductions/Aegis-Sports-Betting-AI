@@ -1,0 +1,17 @@
+{
+  "name": "Lineforge",
+  "short_name": "Lineforge",
+  "description": "Premium sports intelligence, live board monitoring, AI confidence, market context, and manual signal verification.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#020812",
+  "theme_color": "#071624",
+  "icons": [
+    {
+      "src": "/assets/images/lineforge-logo.png",
+      "sizes": "1536x1024",
+      "type": "image/png"
+    }
+  ]
+}

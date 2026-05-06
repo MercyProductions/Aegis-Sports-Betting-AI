@@ -40,6 +40,20 @@ aegis-report.pdf
 aegis-provider-health.csv
 aegis-workspace-export.tsv
 aegis_*.png
+Website/.env
+Website/.env.local
+Website/storage/cache/*
+!Website/storage/cache/.gitkeep
+Website/storage/users.json
+Website/storage/users.json.tmp
+Website/storage/provider-settings.json
+Website/storage/provider-settings.json.tmp
+Website/storage/security-rate-limits.json
+Website/storage/security-events.jsonl
+Website/storage/intelligence/*
+!Website/storage/intelligence/.gitkeep
+Website/storage/*.lock
+Website/.aegis-runtime/
 
 # Packaged artifacts
 *.zip
