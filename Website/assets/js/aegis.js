@@ -3530,7 +3530,12 @@ document.addEventListener("keydown", (event) => {
         });
         workspaceCards().forEach((card, index) => {
             const id = workspacePanelId(card, index);
-            const collapsed = Boolean(workspaceState.collapsed[id]);
+            const primary = isPrimaryWorkspaceCard(card);
+            if (primary && workspaceState.collapsed[id]) {
+                delete workspaceState.collapsed[id];
+                writeWorkspaceState();
+            }
+            const collapsed = !primary && Boolean(workspaceState.collapsed[id]);
             const pinned = Boolean(workspaceState.pinned[id]);
             card.classList.toggle("is-collapsed", collapsed);
             card.classList.toggle("is-pinned", pinned);
