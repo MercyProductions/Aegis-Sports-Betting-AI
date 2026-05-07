@@ -651,6 +651,7 @@ function aegis_sports_product_apply_provider_settings(?array $settings = null): 
     $settings = $settings ?? aegis_sports_product_read_provider_settings();
 
     aegis_sports_product_apply_runtime_setting('AEGIS_ODDS_API_KEY', (string) ($settings['odds_api_key'] ?? ''));
+    aegis_sports_product_apply_runtime_setting('AEGIS_ODDS_API_REGION', (string) ($settings['preferred_region'] ?? 'us'));
     aegis_sports_product_apply_runtime_setting('AEGIS_INJURY_FEED_URL', (string) ($settings['injury_feed_url'] ?? ''));
     aegis_sports_product_apply_runtime_setting('AEGIS_LINEUP_FEED_URL', (string) ($settings['lineup_feed_url'] ?? ''));
     aegis_sports_product_apply_runtime_setting('AEGIS_NEWS_FEED_URL', (string) ($settings['news_feed_url'] ?? ''));

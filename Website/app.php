@@ -380,7 +380,7 @@ $avatarInitials = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $displayN
     <meta name="theme-color" content="#071624">
     <link rel="icon" type="image/png" href="assets/images/lineforge-logo.png">
     <link rel="manifest" href="/site.webmanifest">
-    <link rel="stylesheet" href="assets/css/aegis.css?v=20260425-aegis-sports-coverage-2">
+    <link rel="stylesheet" href="assets/css/aegis.css?v=20260506-odds-transport-1">
     <link rel="stylesheet" href="assets/css/premium.css?v=20260505-phase5-generalized-1">
 </head>
 <body<?= aegis_sports_product_body_attributes($preferences); ?>>
@@ -1610,6 +1610,6 @@ $avatarInitials = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $displayN
             window.AEGIS_SPORTS_STATE = <?= json_encode($sportsState, JSON_UNESCAPED_SLASHES); ?>;
         </script>
     <?php endif; ?>
-    <script nonce="<?= sports_e(aegis_sports_product_csp_nonce()); ?>" src="assets/js/aegis.js?v=20260505-signalsfix-1"></script>
+    <script nonce="<?= sports_e(aegis_sports_product_csp_nonce()); ?>" src="assets/js/aegis.js?v=20260506-odds-transport-1"></script>
 </body>
 </html>

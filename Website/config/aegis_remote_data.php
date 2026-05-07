@@ -229,32 +229,78 @@ function aegis_remote_data_http_json(string $url, float $timeout = 10.0, array $
         }
     }
 
-    $curlPath = aegis_remote_data_external_curl_path();
-    if ($curlPath !== '' && function_exists('shell_exec')) {
-        $parts = [
-            escapeshellarg($curlPath),
-            '--silent',
-            '--fail',
-            '--location',
-            '--max-time',
-            (string) max(2, min(30, (int) ceil($timeout))),
-        ];
-        foreach ($headerLines as $headerLine) {
-            $parts[] = '-H';
-            $parts[] = escapeshellarg($headerLine);
-        }
-        $parts[] = escapeshellarg($url);
+    $externalDecoded = aegis_remote_data_external_curl_json($url, $timeout, $headerLines);
+    if (is_array($externalDecoded)) {
+        return $externalDecoded;
+    }
 
-        $externalResponse = @shell_exec(implode(' ', $parts));
-        if (is_string($externalResponse) && $externalResponse !== '') {
-            $externalDecoded = json_decode($externalResponse, true);
-            if (is_array($externalDecoded)) {
-                return $externalDecoded;
+    return null;
+}
+
+function aegis_remote_data_external_curl_json(string $url, float $timeout, array $headerLines): ?array
+{
+    $curlPath = aegis_remote_data_external_curl_path();
+    if ($curlPath === '') {
+        return null;
+    }
+
+    $arguments = [
+        $curlPath,
+        '--silent',
+        '--fail',
+        '--location',
+        '--max-time',
+        (string) max(2, min(30, (int) ceil($timeout))),
+    ];
+    foreach ($headerLines as $headerLine) {
+        $arguments[] = '-H';
+        $arguments[] = $headerLine;
+    }
+    $arguments[] = $url;
+
+    if (function_exists('proc_open')) {
+        $descriptors = [
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+        $process = @proc_open($arguments, $descriptors, $pipes);
+        if (is_resource($process)) {
+            $response = stream_get_contents($pipes[1]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $exitCode = proc_close($process);
+            if ($exitCode === 0 && is_string($response) && $response !== '') {
+                $decoded = json_decode($response, true);
+                if (is_array($decoded)) {
+                    return $decoded;
+                }
             }
         }
     }
 
+    if (!function_exists('shell_exec')) {
+        return null;
+    }
+
+    $parts = array_map('aegis_remote_data_shell_arg', $arguments);
+    $externalResponse = @shell_exec(implode(' ', $parts));
+    if (is_string($externalResponse) && $externalResponse !== '') {
+        $externalDecoded = json_decode($externalResponse, true);
+        if (is_array($externalDecoded)) {
+            return $externalDecoded;
+        }
+    }
+
     return null;
+}
+
+function aegis_remote_data_shell_arg(string $value): string
+{
+    if (PHP_OS_FAMILY === 'Windows') {
+        return '"' . str_replace('"', '\"', $value) . '"';
+    }
+
+    return escapeshellarg($value);
 }
 
 function aegis_remote_data_relative_time(?string $iso): string

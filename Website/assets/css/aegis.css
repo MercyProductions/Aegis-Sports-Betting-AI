@@ -4699,6 +4699,18 @@ body.chatbot-modal-open {
     font-weight: 700;
 }
 
+.sports-reference-picks-table .pending {
+    color: #8fb6d9;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.sports-reference-picks-table .down {
+    color: #ff6673;
+    font-style: normal;
+    font-weight: 700;
+}
+
 .markets-reference-tickers em.down,
 .markets-reference-watchlist-list em.down {
     color: #ff6673;

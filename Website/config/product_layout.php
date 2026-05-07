@@ -53,7 +53,7 @@ function sports_page_header(string $title, string $active = '', array $options =
     <link rel="icon" type="image/png" href="/assets/images/lineforge-logo.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="/assets/css/premium.css?v=20260505-scrollbar-blue-1">
-    <link rel="stylesheet" href="/assets/css/aegis.css?v=20260425-aegis-sports-coverage-2">
+    <link rel="stylesheet" href="/assets/css/aegis.css?v=20260506-odds-transport-1">
     <link rel="stylesheet" href="/assets/css/product.css?v=20260505-scrollbar-blue-1">
     <?php if (is_array($schema)): ?>
         <script type="application/ld+json" nonce="<?= aegis_sports_product_e(aegis_sports_product_csp_nonce()); ?>"><?= json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>

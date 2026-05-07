@@ -219,7 +219,7 @@ function lineforge_warehouse_append_once(string $scope, array $record, int $ttlS
 
 function lineforge_warehouse_tail_lines(string $path, int $limit): array
 {
-    $limit = max(1, min(20000, $limit));
+    $limit = max(1, min(2000, $limit));
     $size = @filesize($path);
     if ($size === false || $size <= 0) {
         return [];
@@ -234,9 +234,11 @@ function lineforge_warehouse_tail_lines(string $path, int $limit): array
     $buffer = '';
     $position = $size;
     $chunkSize = 32768;
+    $bytesRead = 0;
+    $maxBytes = 5 * 1024 * 1024;
 
-    while ($position > 0 && count($lines) < $limit) {
-        $readSize = min($chunkSize, $position);
+    while ($position > 0 && count($lines) < $limit && $bytesRead < $maxBytes) {
+        $readSize = min($chunkSize, $position, $maxBytes - $bytesRead);
         $position -= $readSize;
         if (@fseek($handle, $position) !== 0) {
             break;
@@ -247,6 +249,7 @@ function lineforge_warehouse_tail_lines(string $path, int $limit): array
             break;
         }
 
+        $bytesRead += $readSize;
         $buffer = $chunk . $buffer;
         $parts = explode("\n", $buffer);
         $buffer = array_shift($parts);
@@ -274,7 +277,7 @@ function lineforge_warehouse_read_recent(string $scope, int $days = 14, int $lim
 {
     $records = [];
     $days = max(1, min(90, $days));
-    $limit = max(1, min(5000, $limit));
+    $limit = max(1, min(1000, $limit));
     for ($offset = 0; $offset < $days; $offset += 1) {
         $path = lineforge_warehouse_jsonl_path($scope, gmdate('Y-m-d', time() - ($offset * 86400)));
         if (!is_file($path)) {
@@ -282,7 +285,7 @@ function lineforge_warehouse_read_recent(string $scope, int $days = 14, int $lim
         }
 
         $remaining = $limit - count($records);
-        $lines = lineforge_warehouse_tail_lines($path, max($remaining * 3, $remaining + 50));
+        $lines = lineforge_warehouse_tail_lines($path, min(600, max($remaining * 2, $remaining + 20)));
         foreach ($lines as $line) {
             $decoded = json_decode((string) $line, true);
             if (is_array($decoded)) {
@@ -610,14 +613,14 @@ function lineforge_warehouse_jsonl_count(string $scope, string $collectionKey = 
         return lineforge_warehouse_recent_line_count($scope, 30);
     }
 
-    $records = lineforge_warehouse_read_recent($scope, 30, 160);
+    $records = lineforge_warehouse_read_recent($scope, 14, 40);
     return array_sum(array_map(static fn(array $record): int => count((array) ($record[$collectionKey] ?? [])), $records));
 }
 
 function lineforge_warehouse_calibration_jsonl(): array
 {
-    $predictionRecords = lineforge_warehouse_read_recent('warehouse-prediction-timeline', 60, 180);
-    $eventRecords = lineforge_warehouse_read_recent('warehouse-event-timeline', 60, 120);
+    $predictionRecords = lineforge_warehouse_read_recent('warehouse-prediction-timeline', 45, 120);
+    $eventRecords = lineforge_warehouse_read_recent('warehouse-event-timeline', 30, 36);
     if (!$predictionRecords || !$eventRecords) {
         return lineforge_warehouse_empty_calibration();
     }

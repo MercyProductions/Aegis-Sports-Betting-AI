@@ -2710,6 +2710,17 @@ document.addEventListener("keydown", (event) => {
         return basis || strength || `${item.actionLabel || "Signal"} / ${item.risk || "Managed risk"}`;
     };
 
+    const valueToneClass = (value = "") => {
+        const text = String(value || "").trim().toLowerCase();
+        if (!text || text === "--" || text === "$0.00" || text.includes("needs") || text.includes("awaiting") || text.includes("snapshot")) {
+            return "pending";
+        }
+        if (text.startsWith("-")) {
+            return "down";
+        }
+        return "up";
+    };
+
     const renderPredictions = (items = []) => {
         if (!predictionGrid) return;
 
@@ -2738,8 +2749,8 @@ document.addEventListener("keydown", (event) => {
                             <strong>${escapeHtml(item.odds || "-110")}</strong>
                             <small>Fair ${escapeHtml(item.fairOdds || "--")}</small>
                         </div>
-                        <div class="sports-reference-pick-edge up">${escapeHtml(edge)}</div>
-                        <div class="sports-reference-pick-ev up">${escapeHtml(expected)}</div>
+                        <div class="sports-reference-pick-edge ${valueToneClass(edge)}">${escapeHtml(edge)}</div>
+                        <div class="sports-reference-pick-ev ${valueToneClass(expected)}">${escapeHtml(expected)}</div>
                         <button type="button" class="sports-reference-info-button" data-sports-open-pick="${escapeHtml(index)}">Details</button>
                     </article>
                 `;
@@ -5995,7 +6006,7 @@ document.addEventListener("keydown", (event) => {
             confidenceValue,
             confidence: `${confidenceValue}%`,
             fairProbability: `${confidenceValue}.0%`,
-            odds: hasSpread || hasTotal ? "Feed snapshot" : "--",
+            odds: hasSpread || hasTotal ? "Public snapshot" : "--",
             edge: statusKey === "final" ? "+0.0%" : "+6.4%",
             expectedValue: statusKey === "final" ? "$0.00" : "$38.70",
             risk: statusKey === "live" ? "Live volatility" : statusKey === "final" ? "Closed market" : "Pregame risk",

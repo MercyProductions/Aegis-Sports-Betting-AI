@@ -41,7 +41,28 @@ function aegis_sports_signed(float $value, string $suffix = '%', int $precision 
 
 function aegis_sports_money(float $value): string
 {
-    return '$' . number_format($value, 2);
+    $prefix = $value < 0 ? '-$' : '$';
+    return $prefix . number_format(abs($value), 2);
+}
+
+function aegis_sports_edge_value(string $edge): ?float
+{
+    $clean = trim(str_replace('%', '', $edge));
+    if ($clean === '' || !is_numeric($clean)) {
+        return null;
+    }
+
+    return (float) $clean;
+}
+
+function aegis_sports_expected_value_from_edge(string $edge, float $stake = 100.0): string
+{
+    $edgeValue = aegis_sports_edge_value($edge);
+    if ($edgeValue === null) {
+        return aegis_sports_money(0);
+    }
+
+    return aegis_sports_money(($edgeValue / 100) * $stake);
 }
 
 function aegis_sports_probability_to_american(float $probability): string
@@ -211,6 +232,12 @@ function aegis_sports_odds_api_key(): string
     return '';
 }
 
+function aegis_sports_odds_api_region(): string
+{
+    $region = strtolower(trim((string) (getenv('AEGIS_ODDS_API_REGION') ?: 'us')));
+    return in_array($region, ['us', 'us2', 'uk', 'eu', 'au'], true) ? $region : 'us';
+}
+
 function aegis_sports_team_aliases(array $team): array
 {
     $aliases = [];
@@ -370,7 +397,7 @@ function aegis_sports_fetch_odds_board(string $sportKey, int $ttlSeconds): ?arra
     $bookmakers = aegis_sports_odds_api_bookmakers();
     $query = http_build_query([
         'apiKey' => $apiKey,
-        'regions' => 'us',
+        'regions' => aegis_sports_odds_api_region(),
         'markets' => 'h2h,spreads,totals',
         'oddsFormat' => 'american',
         'dateFormat' => 'iso',
@@ -380,7 +407,7 @@ function aegis_sports_fetch_odds_board(string $sportKey, int $ttlSeconds): ?arra
 
     return aegis_remote_data_cached(
         'sports-odds',
-        $sportKey . ':' . $bookmakers,
+        'v2:' . aegis_sports_odds_api_region() . ':' . $sportKey . ':' . $bookmakers,
         max(90, min(900, $ttlSeconds)),
         static function () use ($url): array {
             $data = aegis_remote_data_http_json($url, 4.0);
@@ -1094,6 +1121,7 @@ function aegis_sports_enrich_market_access(array $games, array $predictions, int
         if ($best && (string) ($best['price'] ?? '--') !== '--') {
             $prediction['odds'] = (string) $best['price'];
             $prediction['edge'] = (string) ($best['modelEdge'] ?? $prediction['edge'] ?? '+0.0%');
+            $prediction['expectedValue'] = aegis_sports_expected_value_from_edge((string) $prediction['edge']);
         }
         $prediction['teamComparison'] = is_array($prediction['teamComparison'] ?? null)
             ? $prediction['teamComparison']
@@ -1130,6 +1158,7 @@ function aegis_sports_enrich_market_access(array $games, array $predictions, int
         if ($best && (string) ($best['price'] ?? '--') !== '--') {
             $prediction['odds'] = (string) $best['price'];
             $prediction['edge'] = (string) ($best['modelEdge'] ?? $prediction['edge'] ?? '+0.0%');
+            $prediction['expectedValue'] = aegis_sports_expected_value_from_edge((string) $prediction['edge']);
         }
         $autoContext = $game ? aegis_sports_auto_context_for_game($game, $refreshSeconds) : [];
         $prediction['autoContext'] = $autoContext;
@@ -1142,6 +1171,7 @@ function aegis_sports_enrich_market_access(array $games, array $predictions, int
         if ($best && (string) ($best['price'] ?? '--') !== '--') {
             $prediction['odds'] = (string) $best['price'];
             $prediction['edge'] = (string) ($best['modelEdge'] ?? $prediction['edge'] ?? '+0.0%');
+            $prediction['expectedValue'] = aegis_sports_expected_value_from_edge((string) $prediction['edge']);
         }
         $prediction['teamComparison'] = aegis_sports_team_comparison($prediction, $game, $autoContext);
         $winnerProjection = $game ? aegis_sports_prediction_winner_projection($game, $prediction, $autoContext) : [];
@@ -2958,7 +2988,7 @@ function aegis_sports_prediction_for_game(array $game, int $index, int $bucket, 
         'confidence' => $confidence . '%',
         'fairProbability' => number_format($confidence, 1) . '%',
         'fairOdds' => aegis_sports_probability_to_american($confidence / 100),
-        'odds' => ($hasSpread || $hasTotal) && $statusKey !== 'final' ? 'Feed snapshot' : '--',
+        'odds' => ($hasSpread || $hasTotal) && $statusKey !== 'final' ? 'Public snapshot' : '--',
         'edge' => $edgeValue,
         'expectedValue' => $expectedValue,
         'reason' => $reason,
@@ -3112,7 +3142,7 @@ function aegis_sports_apply_confidence_calibration(array $prediction, array $gam
     $prediction['canBet'] = $hasActionableLine;
     $prediction['stake'] = $hasActionableLine ? number_format(aegis_sports_clamp(($confidence - 52) / 30, 0.10, 0.70), 2) . 'u' : '0.00u';
     if (!$hasActionableLine) {
-        $prediction['edge'] = 'Needs line';
+        $prediction['edge'] = 'Needs book line';
         $prediction['expectedValue'] = aegis_sports_money(0);
         $prediction['verdict'] = 'Watch only';
         $prediction['actionLabel'] = 'AI Watch';
@@ -3150,7 +3180,7 @@ function aegis_sports_reprice_market_links(array $links, array $prediction): arr
                 $link['modelEdge'] = aegis_sports_signed(($modelProbability - $bookProbability) * 100);
             }
         } elseif ((string) ($link['kind'] ?? '') === 'Sportsbook') {
-            $link['modelEdge'] = 'Needs line';
+            $link['modelEdge'] = 'Needs book line';
         }
     }
     unset($link);
